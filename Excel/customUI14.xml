@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui" onLoad="PMToolkitCode1.Onload">
+<ribbon>
+<tabs>
+<tab id="PMTab1" label="GEN² T4PM">
+
+ <group id="PMGrp1" label="Information" >
+
+
+         <button 	size = "large"
+			id="InformationButton"
+			label="Info."
+			imageMso="Info"
+			onAction="RibbonCalls1.Info_Click"/>
+
+         <button 	size = "large"
+			id="HelpButton"
+			label="Help"
+			imageMso="Help"
+			onAction="RibbonCalls1.Help_Click"/>
+
+ </group>
+
+
+ <group id="PMGrp2" label="Settings" >
+
+         <button 	id="WorkingFolderButton"
+			label="Set Working Folder"
+			imageMso="GroupWorkspaces"
+			onAction="PMToolkitCode1.SetFolder_Click"/>
+  
+         <button 	
+			id="GetFieldListButton"
+			label="Update Field List"
+			imageMso="GroupPivotTableLayout"
+			onAction="PMToolkitCode1.GetList_Click"/>
+
+ </group>
+
+ <group id="PMGrp4" label="Data Tools" >
+
+         <button 	size = "large"
+			id="NewProject"
+			label="New Project Store"
+			imageMso="GroupProjectInsert"
+			onAction="PMToolkitCode1.NewProject_Click"/>
+
+         <button 	size = "large"
+			id="PickProject"
+			label="Select Working Project"
+			imageMso="LinksBetweenProjects"
+			onAction="PMToolkitCode1.PickProject_Click"/>
+
+         <button 	size = "large"
+			id="UploadData"
+			label="Upload Project Data"
+			imageMso="ShadowNudgeUpClassic"
+			onAction="PMToolkitCode1.UploadData_Click"/>
+
+         <button 	size = "large"
+			id="DownloadData"
+			label="Download Project Data"
+			imageMso="ShadowNudgeDownClassic"
+			onAction="PMToolkitCode1.DownloadData_Click"/>
+
+ </group>
+
+
+ <group id="PMGrp5" label="Current Project" >
+
+		<labelControl id="PremisesName" 
+				  getLabel="CallbackGetSiteLabel" />
+		<labelControl id="ProjectTitle"
+				  getLabel="CallbackGetTitleLabel" />
+		<labelControl id="ReferenceID" 
+				  getLabel="CallbackGetReferenceLabel" />
+	
+ </group>
+
+</tab>
+<tab id="PMTab2" label="GEN² T4PM Editor" getVisible="EditorTab">
+ <group id="PMGrp3" label="Template Setup" >
+
+         <button 	
+			id="SetFieldButton"
+			label="Set Dynamic Field"
+			imageMso="TemplateAssociateToList"
+			onAction="RibbonCalls2.SetTemplateField_Click"/>
+
+         <button 	id="RemoveFieldButton"
+			label="Delete Dynamic Field"
+			imageMso="BaselineClear"
+			onAction="RibbonCalls2.RemoveFieldButton_Click"/>
+
+         <button 	id="ClearFieldButton"
+			label="Clear Dynamic Fields"
+			imageMso="DataValidationClearValidationCircles"
+			onAction="RibbonCalls2.ClearFieldButton_Click"/>
+
+
+         <button 	id="MakeHighlights"
+			label="Highlight Dynamic Field(s)"
+			imageMso="FillColorGallery"
+			onAction="RibbonCalls2.MakeHighlights_Click"/>
+
+         <button 	id="ClearHighlights"
+			label="Clear Highlights"
+			imageMso="ClearAll"
+			onAction="RibbonCalls2.ClearHighlights_Click"/>
+
+ </group>
+</tab>
+</tabs>
+</ribbon>
+</customUI>
