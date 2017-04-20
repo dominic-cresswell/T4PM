@@ -1,4 +1,4 @@
-Attribute VB_Name = "ClipboardCode"
+Attribute VB_Name = "S_ClipboardCode"
 Declare Function GlobalUnlock Lib "kernel32" (ByVal hMem As Long) _
    As Long
 Declare Function GlobalLock Lib "kernel32" (ByVal hMem As Long) _

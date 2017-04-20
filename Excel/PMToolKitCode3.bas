@@ -3,13 +3,18 @@ Attribute VB_Name = "PMToolKitCode3"
 Public ProjectWriteDataArray(9999, 4)
 Public ProjectReadDataArray(9999, 4)
 
+
 Sub PullWriteDataFromWorksheets(dummy$)
 
 ' get the valid field data
     Call ImportFieldData("")
 
 On Error Resume Next
-    For Each sh In Sheets
+ '   For Each sh In Sheets
+    For Each sh In Excel.ActiveWindow.SelectedSheets
+        '  MsgBox sh.Name
+        '  Stop
+        '  If sh.Select = False Then GoTo skip:
           
         For Each bitname In sh.Names
             FoundRef$ = ""
@@ -18,7 +23,11 @@ On Error Resume Next
             
             ' check it is a T4PM range name
             If InStr(vbTextCompare, FoundRef$, "T4PM") > 0 Then
-               FoundRef$ = Right(FoundRef$, Len(FoundRef$) - Len(sh.Name))
+                
+               sheetlength = Len(sh.Name)
+               If Left(FoundRef$, 1) = "'" And Mid(FoundRef$, sheetlength + 2, 1) = "'" Then sheetlength = sheetlength + 2
+               
+               FoundRef$ = Right(FoundRef$, Len(FoundRef$) - sheetlength)
                FoundRef$ = Replace(FoundRef$, "!T4PM_", "")
                
             ' check it is  single bit of data
@@ -47,6 +56,8 @@ On Error Resume Next
                
         End If
         Next
+        
+skip:
     Next
 
 
@@ -77,7 +88,43 @@ Exit Sub
 PlaceInArray:
 
     For nnn = 0 To 9999
-        If ProjectWriteDataArray(nnn, 0) = "" Or LCase(ProjectWriteDataArray(nnn, 0)) = LCase(FoundRef$) Then
+    
+        ' this is the check for finding data already placed in the array
+        If LCase(ProjectWriteDataArray(nnn, 0)) = LCase(FoundRef$) Then
+            TempRef$ = Left(FoundRef$, InStr(vbTextCompare, FoundRef$, "_") - 1)
+            
+            ' get name and worksheet seperately
+            GetRangeName$ = ""
+            GetRangeSheet$ = ""
+            GetRangeName$ = Right(bitname.Name, Len(bitname.Name) - InStr(vbTextCompare, bitname.Name, "!"))
+            GetRangeSheet$ = Left(bitname.Name, InStr(vbTextCompare, bitname.Name, "!") - 1)
+            
+            If Left(GetRangeSheet$, 1) = "'" And Right(GetRangeSheet$, 1) = "'" Then
+            GetRangeSheet$ = Mid(GetRangeSheet$, 2, Len(GetRangeSheet$) - 2)
+            End If
+            
+            ' do the checks!
+             If ProjectWriteDataArray(nnn, 0) <> "" _
+                And ProjectWriteDataArray(nnn, 1) <> Worksheets(GetRangeSheet$).Range(GetRangeName$).Cells(1).Text _
+                And Worksheets(GetRangeSheet$).Range(GetRangeName$).Cells(1).Text <> "" Then
+ '               And Worksheets(GetRangeSheet$).Range(GetRangeName$).Cells(1).Text Is Not Null Then
+                
+                longmsg$ = ""
+                longmsg$ = longmsg$ & "Beware: Repeated data (" & TempRef$ & ") is entered with varying values "
+                longmsg$ = longmsg$ & "and has not been uploaded when repeated." & vbCrLf & vbCrLf
+                longmsg$ = longmsg$ & "Stored value: '" & ProjectWriteDataArray(nnn, 1) & "'" & vbCrLf
+                longmsg$ = longmsg$ & "Second value: '" & Worksheets(GetRangeSheet$).Range(GetRangeName$).Cells(1).Text & "'  " & vbCrLf
+                longmsg$ = longmsg$ & "Worksheet: '" & GetRangeSheet$ & "'" & vbCrLf
+                 longmsg$ = longmsg$ & "Cell Name: '" & GetRangeName$ & "' "
+                
+                result = MsgBox(longmsg$, vbCritical, ProgramName$)
+            End If
+            
+            ' at this point, we passed, but we dont care.
+        
+        
+        ' this is for 'new' data
+        ElseIf ProjectWriteDataArray(nnn, 0) = "" Or LCase(ProjectWriteDataArray(nnn, 0)) = LCase(FoundRef$) Then
         
         TempRef$ = Left(FoundRef$, InStr(vbTextCompare, FoundRef$, "_") - 1)
         'Len(TempRef$) -
@@ -87,21 +134,28 @@ PlaceInArray:
                result = MsgBox("Beware: Repeated data (" & TempRef$ & ") is entered with varying values.", vbCritical, ProgramName$)
             End If
         
-        '
+    
         
         ProjectWriteDataArray(nnn, 0) = FoundRef$
         ProjectWriteDataArray(nnn, 1) = ""
         
-      '  ProjectWriteDataArray(nnn, 1) = Range(CStr(bitname.Name)).Text
-        
+        ' get name and worksheet seperately
             GetRangeName$ = ""
             GetRangeSheet$ = ""
             GetRangeName$ = Right(bitname.Name, Len(bitname.Name) - InStr(vbTextCompare, bitname.Name, "!"))
             GetRangeSheet$ = Left(bitname.Name, InStr(vbTextCompare, bitname.Name, "!") - 1)
             
+            If Left(GetRangeSheet$, 1) = "'" And Right(GetRangeSheet$, 1) = "'" Then
+            GetRangeSheet$ = Mid(GetRangeSheet$, 2, Len(GetRangeSheet$) - 2)
+            End If
+            
+            
             ' this is a fix for merged cells
+            If Worksheets(GetRangeSheet$).Range(GetRangeName$).Cells.Count > 1 Then
             ProjectWriteDataArray(nnn, 1) = Worksheets(GetRangeSheet$).Range(GetRangeName$).Cells(1).Text
-      '  Stop
+            Else
+            ProjectWriteDataArray(nnn, 1) = Worksheets(GetRangeSheet$).Range(GetRangeName$).Text
+            End If
 
 
         ' validate the datatype against inputted info
@@ -155,12 +209,6 @@ ValidateData:
             
         ' Debug.Print TempField$; "   =   "; FieldListArray(zzz, 2)
                 ProjectWriteDataArray(nnn, 2) = FieldListArray(zzz, 2)
-                
-                
-
-                
-                
-                
                 
             
                 ' now check that is conforms

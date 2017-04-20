@@ -1,4 +1,4 @@
-Attribute VB_Name = "DataType"
+Attribute VB_Name = "S_Define_ProjectData"
 ' Define user-defined type.
 Public Type ProjectData
     SiteName As String

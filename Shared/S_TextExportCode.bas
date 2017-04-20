@@ -1,4 +1,4 @@
-Attribute VB_Name = "TextExportCode"
+Attribute VB_Name = "S_TextExportCode"
 
 
 Function ClearSpecialCharacters(incomeString$)

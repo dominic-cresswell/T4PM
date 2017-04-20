@@ -5,6 +5,7 @@ Public myRibbon
 Public RibbonID$
 
 Public ProgramPath$, WorkingPath$
+Public RememberProject As Boolean
 
 Public CurrentStore$
 
@@ -16,21 +17,6 @@ Public FieldListArray(9999, 4)
 Public CollectionListArray(9999)
 
 
-'============== GENERIC FUNCTIONS
-
-Public Function DirExists(ByVal sDirName As String) As Boolean
-On Error Resume Next
-DirExists = (GetAttr(sDirName) And vbDirectory) = vbDirectory
-Err.Clear
-End Function
-
-
-Public Function FileExists(ByVal sPathName As String) As Boolean
-On Error Resume Next
-FileExists = (GetAttr(sPathName) And vbNormal) = vbNormal
-Err.Clear
-End Function
-
 
 '============== BUTTON FUNCTIONS
 
@@ -41,6 +27,8 @@ Sub Onload(ribbon As IRibbonUI)
     
        RibbonID$ = ObjPtr(myRibbon)
         Call SaveRibbonID(RibbonID$)
+        
+        RememberProject = CBool(PMToolkitCode1.GetConfigSetting("RememberLastProject"))
         
         ' get the field list
         Call ImportFieldData("")
@@ -183,6 +171,16 @@ Sub UploadData_Click(control As IRibbonControl)
                Exit Sub
         End If
         
+        
+    ' check shift key
+    If IsShiftKeyDown = True Then
+        result = MsgBox("Select all worksheets for upload?", vbYesNo, ProgramName$)
+        If result = vbYes Then
+            Sheets.Select
+        End If
+    End If
+        
+        
     ' re-fill the temp array
     Call PullWriteDataFromWorksheets("")
 
@@ -228,6 +226,19 @@ End Sub
 
 'Callback for WorkingFolderButton onAction
 Sub SetFolder_Click(control As IRibbonControl)
+
+    If IsShiftKeyDown = True Then
+        result = MsgBox("Working folder currently set to: " & vbCrLf & vbCrLf & WorkingPath$, vbInformation, ProgramName$)
+        Exit Sub
+    End If
+    
+    If WorkingPath$ <> "" And DirExists(WorkingPath$) = True Then
+        
+        result = MsgBox("Current Working folder is valid." & vbCrLf & vbCrLf & "Change anyway?", vbInformation + vbYesNo, ProgramName$)
+        If result <> vbYes Then Exit Sub
+
+    End If
+    
 
 '
     If CheckUserConfig = False Then ' there is no 'userconfig' file
@@ -275,6 +286,71 @@ End Sub
 
 
 
+'======
+'Callback for Folder onAction
+Sub Folder_Click(control As IRibbonControl)
+
+    Call Unavailable("")
+    Exit Sub
+    
+    ' check if we have a store loaded
+    
+    ' is shift held... if so, select folder instead of openning
+    
+    
+    
+  'then...
+    ' check we have a folder
+    
+    ' check the folder is valie
+    
+    ' open the folder
+    
+End Sub
+
+
+'======
+'Callback for Email onAction
+Sub Email_Click(control As IRibbonControl)
+
+   Call Unavailable("")
+ 
+     ' check if we have a store loaded
+    
+    ' check we have a folder
+    
+    ' check the folder is valie
+    
+    ' create an email
+    
+
+    
+End Sub
+
+
+Sub RecallProject_Status(control As IRibbonControl, ByRef returnedVal)
+'
+' Code for getPressed callback. Ribbon control checkBox
+'
+    If control.ID = "checkboxShowMessage" Then
+        returnedVal = RememberProject
+    End If
+    
+End Sub
+
+Sub RecallProject_Click(control As IRibbonControl, pressed As Boolean)
+'
+' Code for onAction callback. Ribbon control checkBox
+'
+    If control.ID = "checkboxShowMessage" Then
+       RememberProject = pressed
+
+    End If
+    
+    
+End Sub
+
+
 Function GetConfigSetting(inOption$)
     
     ' ....
@@ -312,7 +388,7 @@ Sub CreateUserConfig(dummy$)
 
         DefaultConfig$ = ""
         DefaultConfig$ = DefaultConfig$ & "WorkingPath=" & Environ("userprofile") & "\" & vbCrLf
-        DefaultConfig$ = DefaultConfig$ & "" & vbCrLf
+        DefaultConfig$ = DefaultConfig$ & "RememberLastProject=False" & vbCrLf
         DefaultConfig$ = DefaultConfig$ & "" & vbCrLf
      
    Call MakeTextFile(DefaultConfig$, ProgramPath$ & "UserConfigFile")
@@ -452,6 +528,12 @@ abort:
     
 End Sub
 
+
+Sub IssueSheet_Click(control As IRibbonControl)
+
+    Call MakePDFSheet("")
+
+End Sub
 
 
 Sub Unavailable(dummy$)

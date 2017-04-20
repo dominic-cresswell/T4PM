@@ -1,4 +1,4 @@
-Attribute VB_Name = "RibbonStateCode"
+Attribute VB_Name = "S_RibbonStateCode"
 
 
 Public MyTag As String

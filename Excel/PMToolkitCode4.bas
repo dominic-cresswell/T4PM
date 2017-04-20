@@ -45,7 +45,9 @@ Sub ExportDataToStore(showmsg As Boolean)
     End If
 
     ' ======
+    If ProjectWriteDataArray(zzz, 0) = "" Then
     Call PullWriteDataFromWorksheets("")
+    End If
     
     
    ' invoke a new Excel

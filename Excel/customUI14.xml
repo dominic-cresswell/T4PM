@@ -6,21 +6,19 @@
 
  <group id="PMGrp1" label="Information" >
 
-
          <button 	size = "large"
 			id="InformationButton"
 			label="Info."
 			imageMso="Info"
-			onAction="RibbonCalls1.Info_Click"/>
+			onAction="S_RibbonCalls1.Info_Click"/>
 
          <button 	size = "large"
 			id="HelpButton"
 			label="Help"
 			imageMso="Help"
-			onAction="RibbonCalls1.Help_Click"/>
+			onAction="S_RibbonCalls1.Help_Click"/>
 
  </group>
-
 
  <group id="PMGrp2" label="Settings" >
 
@@ -35,6 +33,11 @@
 			imageMso="GroupPivotTableLayout"
 			onAction="PMToolkitCode1.GetList_Click"/>
 
+         <checkBox 	
+			id="RememberLastProject"
+			label="Remember Last Project"
+			onAction="PMToolkitCode1.RecallProject_Click"
+			getPressed = "PMToolkitCode1.RecallProject_Status"/>
  </group>
 
  <group id="PMGrp4" label="Data Tools" >
@@ -63,10 +66,27 @@
 			imageMso="ShadowNudgeDownClassic"
 			onAction="PMToolkitCode1.DownloadData_Click"/>
 
+         <button 	size = "large"
+ 			id="IssueSheet"
+ 			label="Issue PDF Copy"
+ 			imageMso="SlideNew"
+ 			onAction="PMToolkitCode1.IssueSheet_Click"/>
+
+         <button 	size = "large"
+			id="MailControl"
+			label="E-mail"
+			imageMso="NewMailMessage"
+			onAction="PMToolkitCode1.Email_Click"/>
  </group>
 
 
  <group id="PMGrp5" label="Current Project" >
+
+        	 <button 	size = "large"
+				id="FolderControl"
+				label="Project Folder"
+				imageMso="Folder"
+				onAction="PMToolkitCode1.Folder_Click"/>
 
 		<labelControl id="PremisesName" 
 				  getLabel="CallbackGetSiteLabel" />
@@ -74,12 +94,14 @@
 				  getLabel="CallbackGetTitleLabel" />
 		<labelControl id="ReferenceID" 
 				  getLabel="CallbackGetReferenceLabel" />
+
 	
  </group>
 
 </tab>
 <tab id="PMTab2" label="GEN² T4PM Editor" getVisible="EditorTab">
  <group id="PMGrp3" label="Template Setup" >
+
 
          <button 	
 			id="SetFieldButton"
