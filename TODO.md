@@ -10,13 +10,12 @@
 - Formula's in Risk Register
 - Rebranding
 - PM Checklist Functions [CURRENT]
+- Setup of T4PM store, should also etup a main project folder (via template, or list of folders)
 
 
 ## Main Excel Add-In
 - Open Template Folders and copy template into Project Folder
-- Setup of T4PM store, to setup main project folder (via template)
-- Restrict opening of 'Stores' to Permitted Users [High Pri] 
-- Add Button:  "Remember Last Project Store" [Low Pri]
+- Add Button:  "Remember Last Project Store" 
 - Verify Data (check for different data in similar cells) [Medium Pri]
 - Correct Data Type Formats on Download [Low Pri]
 - Allow for downloading of Group / Special Information [Medium Pri]
