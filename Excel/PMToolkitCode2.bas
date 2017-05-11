@@ -2,6 +2,43 @@ Attribute VB_Name = "PMToolkitCode2"
 Public FieldRefOutput$
 
 
+
+
+Sub SetProjectFolder(dummy$)
+
+
+   ' cehck we have a store selected, if not, grab it again
+        If CurrentStore$ = "" Then
+            Call RestoreStore("")
+        End If
+        
+          If CurrentStore$ = "" Or FileExists(CurrentStore$) = False Then
+               Result = MsgBox("Please re-select Project Store", vbCritical, ProgramName$)
+               Exit Sub
+        End If
+                
+        FindFolder$ = GetFolder("G:\CED PG\Premises\")
+        
+        If FindFolder$ = "" Or DirExists(FindFolder$) = False Then
+              Result = MsgBox("Invalid Folder selection.", vbCritical, ProgramName$)
+              Exit Sub
+        End If
+    
+        FindFolder$ = AddSlash(FindFolder$)
+        
+        Call ClearWriteData("")
+
+        ProjectWriteDataArray(nnn, 0) = "Folder Path"   ' field name
+        ProjectWriteDataArray(nnn, 1) = FindFolder$     ' content / value
+        ProjectWriteDataArray(nnn, 2) = "text"          ' type
+        ProjectWriteDataArray(nnn, 3) = ""
+        ProjectWriteDataArray(nnn, 4) = ""              ' errors
+        
+        Call ExportDataToStore(True)
+                
+End Sub
+
+
 Function GetProjectData(findField$)
 
     'GetProjectData = "St James Infants"

@@ -40,7 +40,7 @@ Sub ExportDataToStore(showmsg As Boolean)
 
     ' ======
     If CurrentStore$ = "" Or FileExists(CurrentStore$) = False Then
-        result = MsgBox("No Project Store selected.", vbCritical, ProgramName$)
+        Result = MsgBox("No Project Store selected.", vbCritical, ProgramName$)
         Exit Sub
     End If
 
@@ -66,6 +66,7 @@ Sub ExportDataToStore(showmsg As Boolean)
     
     If exlSheet Is Nothing Then GoTo fail:
     
+
     
     ' we made it!
     For zzz = 0 To 9999
@@ -76,18 +77,18 @@ Sub ExportDataToStore(showmsg As Boolean)
         If FieldName$ = "" Then Exit For
         
         ' find a spot
-        For qqq = 1 To 9999
-            If (exlSheet.Columns(1).Rows(qqq) = "" Or LCase(exlSheet.Columns(1).Rows(qqq)) = LCase(FieldName$)) _
+        For QQQ = 1 To 9999
+            If (exlSheet.Columns(1).Rows(QQQ) = "" Or LCase(exlSheet.Columns(1).Rows(QQQ)) = LCase(FieldName$)) _
                 And FieldName$ <> "" Then
                 
                 ' check the reference code hasnt changed!
-                If LCase(exlSheet.Columns(1).Rows(qqq)) = "projectreference_n0" And (exlSheet.Columns(2).Rows(qqq) <> FieldData$) Then
-                    result = MsgBox("Reference Number change has not been stored.", vbCritical, ProgramName$)
+                If LCase(exlSheet.Columns(1).Rows(QQQ)) = "projectreference_n0" And (exlSheet.Columns(2).Rows(QQQ) <> FieldData$) Then
+                    Result = MsgBox("Reference Number change has not been stored.", vbCritical, ProgramName$)
                 Else
                 
-                    exlSheet.Columns(1).Rows(qqq) = FieldName$
-                    exlSheet.Columns(2).Rows(qqq) = FieldData$
-                    exlSheet.Columns(3).Rows(qqq) = Format(Date + Time, "dd-mmm-yyyy hh:mm")
+                    exlSheet.Columns(1).Rows(QQQ) = FieldName$
+                    exlSheet.Columns(2).Rows(QQQ) = FieldData$
+                    exlSheet.Columns(3).Rows(QQQ) = Format(Date + Time, "dd-mmm-yyyy hh:mm")
                 End If
                 
                 Exit For
@@ -99,18 +100,22 @@ Sub ExportDataToStore(showmsg As Boolean)
     
     Next
     
+    exlApp.DisplayAlerts = False
     exlDoc.Save
+    exlApp.DisplayAlerts = True
     exlDoc.Close (True)
     exlApp.Quit
     
-    If showmsg = True Then result = MsgBox("Data Uploaded", vbInformation, ProgramName$)
+    Call ImportDataFromStore("")
+    
+    If showmsg = True Then Result = MsgBox("Data Uploaded", vbInformation, ProgramName$)
     Exit Sub
     
     
 fail:
     exlDoc.Close
     exlApp.Quit
-    result = MsgBox("No worksheet 'Project Store' within working store.", vbCritical, ProgramName$)
+    Result = MsgBox("No worksheet 'Project Store' within working store.", vbCritical, ProgramName$)
     
 End Sub
 
@@ -140,11 +145,11 @@ Sub ImportDataFromStore(dummy$)
    ' we made it!
 
       ' find existing data
-        For qqq = 1 To 9999
+        For QQQ = 1 To 9999
 
-                FieldName$ = exlSheet.Columns(1).Rows(qqq)
-                FieldData$ = exlSheet.Columns(2).Rows(qqq)
-                FieldStamp$ = exlSheet.Columns(3).Rows(qqq)
+                FieldName$ = exlSheet.Columns(1).Rows(QQQ)
+                FieldData$ = exlSheet.Columns(2).Rows(QQQ)
+                FieldStamp$ = exlSheet.Columns(3).Rows(QQQ)
                 
                 If FieldName$ = "" Then Exit For
                 
@@ -168,7 +173,7 @@ fail:
     exlDoc.Close
 fail2:
     exlApp.Quit
-    result = MsgBox("No worksheet 'Project Store' within working store.", vbCritical, ProgramName$)
+    Result = MsgBox("No worksheet 'Project Store' within working store.", vbCritical, ProgramName$)
     
 
 End Sub
@@ -176,12 +181,24 @@ End Sub
 Sub ClearReadData(dummy$)
 
     For zzz = 0 To 9999
-     For qqq = 0 To 4
-        ProjectReadDataArray(zzz, qqq) = ""
+     For QQQ = 0 To 4
+        ProjectReadDataArray(zzz, QQQ) = ""
      Next
     Next
     
 End Sub
+
+
+Sub ClearWriteData(dummy$)
+
+    For zzz = 0 To 9999
+     For QQQ = 0 To 4
+        ProjectWriteDataArray(zzz, QQQ) = ""
+     Next
+    Next
+    
+End Sub
+
 
 Sub PushReadDataToWorksheets(dummy$)
     
@@ -214,19 +231,37 @@ Sub PushReadDataToWorksheets(dummy$)
 End Sub
 
 
-
-
 Sub ClearDataInWorkbook(dummy$)
+
+  ' check shift key
+    If IsShiftKeyDown = True Then
+        Result = MsgBox("Select all worksheets for upload?", vbYesNo, ProgramName$)
+        If Result = vbYes Then
+            Sheets.Select
+        End If
+    End If
     
     On Error Resume Next
     
-    result = MsgBox("This function will remove all current data within the Workbook." & vbCrLf & vbCrLf & "This cannot be undone." & vbCrLf & vbCrLf & "Continue?", vbYesNo + vbInformation, ProgramName$)
-    If result <> vbYes Then Exit Sub
     
-            For Each sh In Sheets
+    Result = MsgBox("This function will remove all current data within the Workbook." & vbCrLf & vbCrLf & "This cannot be undone." & vbCrLf & vbCrLf & "Continue?", vbYesNo + vbInformation, ProgramName$)
+    If Result <> vbYes Then Exit Sub
+    
+    On Error Resume Next
+    
+    
+   '         For Each sh In Sheets
+            For Each sh In Excel.ActiveWindow.SelectedSheets
                 For Each subName In sh.Names
                   
-                  If LCase(Left(Replace(subName.Name, sh.Name & "!", ""), 5)) = "t4pm_" Then
+                'Debug.Print LCase(Left(Replace(subName.Name, sh.Name & "!", ""), 5))
+                
+                realRangeName = subName.Name
+                If Left(subName.Name, 1) = "'" Then realRangeName = Replace(realRangeName, "'" & sh.Name & "'!", "")
+                If Left(subName.Name, 1) <> "'" Then realRangeName = Replace(realRangeName, sh.Name & "!", "")
+                
+                  If Left(LCase(realRangeName), 5) = "t4pm_" Then
+                  
                     sh.Range(subName.Name).Cells(1) = ""
                   End If
                   
@@ -242,8 +277,8 @@ Sub DeleteDynamicRange(dummy$)
     If Selection.Count < 1 Then Exit Sub
 
     ' confirm with user
-       result = MsgBox("This function will remove any Dynamic Fields from the currently selected cell(s)." & vbCrLf & vbCrLf & "This cannot be undone." & vbCrLf & vbCrLf & "Continue?", vbYesNo + vbInformation, ProgramName$)
-    If result <> vbYes Then Exit Sub
+       Result = MsgBox("This function will remove any Dynamic Fields from the currently selected cell(s)." & vbCrLf & vbCrLf & "This cannot be undone." & vbCrLf & vbCrLf & "Continue?", vbYesNo + vbInformation, ProgramName$)
+    If Result <> vbYes Then Exit Sub
 
     On Error Resume Next
             

@@ -32,9 +32,15 @@ Set oMailItem = oOutlook.CreateItem(0)
 
 
 ' "save to" folder
+    
+    '
+  '  If InStr(vbTextCompare, Mail_body$, SaveToFolder$) > 0 Then
+   ' End If
+
+    ' add the path
     If Mail_savepath$ <> "" And FileExists(Mail_savepath$) = True Then
-     AddSavePath$ = "<br><br><table bgcolor=#ffffff border=0 cellpadding=0 cellspacing=0><font color=#ffffff face=arial size=" & Chr(34)
-     AddSavePath$ = AddSavePath$ & "-6" & Chr(34) & ">SaveToMSF=" & Chr(34) & Mail_savepath$ & Chr(34) & "</font></table>"
+     AddSavePath$ = "<br><table bgcolor=#ffffff border=0 cellpadding=0 cellspacing=0><font color=#ffffff face=arial size=" & Chr(34)
+     AddSavePath$ = AddSavePath$ & "-6" & Chr(34) & ">SaveToFolder=" & Chr(34) & Mail_savepath$ & Chr(34) & "</font></table>"
     Else
      AddSavePath$ = ""
     End If
@@ -85,6 +91,7 @@ End With
 Mail_from$ = ""
 Mail_subject$ = ""
 Mail_body$ = ""
+Mail_savepath$ = ""
 For a = 0 To 40: Mail_to$(a) = "": Next a
 For a = 0 To 40: Mail_cc$(a) = "": Next a
 For a = 0 To 40: Mail_attach$(a) = "": Next a
@@ -179,11 +186,6 @@ Sub MailSig()
 End Sub
 
 Sub MailProjectFolder()
-
-On Error GoTo fail:
-    Mail_savepath$ = [Form_General].[Folder Path]
-    Exit Sub
-
 
 fail:
     Mail_savepath$ = ""

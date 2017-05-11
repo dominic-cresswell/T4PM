@@ -14,6 +14,21 @@ Function FindProjectSelection(inPath$)
     Debug.Print " selected: " & FindProjectSelection
     
     
+ ' routine check
+    ProgramPath$ = AddSlash(PMToolkitCode1.CheckProgramPath)
+    
+   ' +++++++++++
+    If RememberProject = True Then
+        ' save project name
+        Call MakeTextFile(ProjectStoreChoice$, ProgramPath$ & "LastProject")
+
+  ' +++++++++++
+    Else
+        If FileExists(ProgramPath$ & "LastProject") Then Kill ProgramPath$ & "LastProject"
+        
+    End If
+    
+    
 End Function
 
 
@@ -57,19 +72,20 @@ Sub DoProjectListRefresh(inPath$)
         
     ' scroll through all items
 
+        ProjectListData$ = ""
        
-        I = 0
+        i = 0
         flag = True
-        file = Dir(inPath$, vbNormal)
+        File = Dir(inPath$, vbNormal)
         ProjectListForm.ProjectStoreList.Clear
         
-        While file <> ""
-                If (Right(file, 4) = ".xls" Or Right(file, 5) = ".xlsm" Or Right(file, 5) = ".xlsx") And Left(file, 5) = "T4PM_" Then
+        While File <> ""
+                If (Right(File, 4) = ".xls" Or Right(File, 5) = ".xlsm" Or Right(File, 5) = ".xlsx") And Left(File, 5) = "T4PM_" Then
                 
-                    Debug.Print file
+                    Debug.Print File
 
                     Dim prjd As ProjectData
-                    prjd = GetTopData(inPath$ & file)
+                    prjd = GetTopData(inPath$ & File)
                     
                     Debug.Print prjd.SiteName
                     Debug.Print prjd.ProjectDescription
@@ -78,22 +94,35 @@ Sub DoProjectListRefresh(inPath$)
                     
                     If prjd.SiteName <> "" And prjd.ProjectReference <> "" And InStr(vbTextCompare, LCase(prjd.AllUsers), LCase(Environ("UserName"))) > 0 Then
                         
-                        ProjectListForm.ProjectStoreList.AddItem (inPath$ & file)
-                        ProjectListForm.ProjectStoreList.Column(1, I) = CapText(prjd.SiteName, 38)
-                        ProjectListForm.ProjectStoreList.Column(2, I) = CapText(prjd.ProjectDescription, 38)
-                        ProjectListForm.ProjectStoreList.Column(3, I) = prjd.ProjectReference
-                        I = I + 1
+                        ProjectListForm.ProjectStoreList.AddItem (inPath$ & File)
+                        ProjectListForm.ProjectStoreList.Column(1, i) = CapText(prjd.SiteName, 38)
+                        ProjectListForm.ProjectStoreList.Column(2, i) = CapText(prjd.ProjectDescription, 38)
+                        ProjectListForm.ProjectStoreList.Column(3, i) = prjd.ProjectReference
+                        
+                        ProjectListData$ = ProjectListData$ & "" & (inPath$ & File)
+                        ProjectListData$ = ProjectListData$ & "|||" & CapText(prjd.SiteName, 38)
+                        ProjectListData$ = ProjectListData$ & "|||" & CapText(prjd.ProjectDescription, 38)
+                        ProjectListData$ = ProjectListData$ & "|||" & prjd.ProjectReference
+                        ProjectListData$ = ProjectListData$ & "|||" & vbCrLf
+                        
+                        i = i + 1
                     End If
-                    
+                
                     
                 End If
-                file = Dir
+                File = Dir
         'Stop
         Wend
                 
         'Stop
-
-
+        
+    ' check we have the program path to save our array in
+         If ProgramPath$ = "" Then ProgramPath$ = PMToolkitCode1.CheckProgramPath
+        ' save list to user folder
+        If ProgramPath$ <> "" And DirExists(ProgramPath$) Then
+         Call MakeTextFile(ProjectListData$, ProgramPath$ & "ProjectList")
+        End If
+        
 End Sub
 
 Function CapText(inText$, amount As Long) As String
@@ -137,10 +166,10 @@ Function GetTopData(inFile$) As ProjectData
    ' we made it!
 
       ' find existing data
-        For qqq = 1 To 9999
+        For QQQ = 1 To 9999
 
-                FieldName$ = exlSheet.Columns(1).Rows(qqq)
-                FieldData$ = exlSheet.Columns(2).Rows(qqq)
+                FieldName$ = exlSheet.Columns(1).Rows(QQQ)
+                FieldData$ = exlSheet.Columns(2).Rows(QQQ)
             '    FieldStamp$ = exlSheet.Columns(3).Rows(qqq)
                 
                 If FieldName$ = "" Then Exit For
@@ -154,9 +183,11 @@ Function GetTopData(inFile$) As ProjectData
                 If FieldName$ = "ProjectDescription_n0" Then prjd.ProjectDescription = FieldData$
                 If FieldName$ = "ProjectReference_n0" Then prjd.ProjectReference = FieldData$
                 
-                If Left(FieldName$, 16) = "PermittedUsers_n" And prjd.AllUsers = "" Then prjd.AllUsers = FieldData$
-                If Left(FieldName$, 16) = "PermittedUsers_n" And prjd.AllUsers <> "" Then prjd.AllUsers = prjd.AllUsers & ", " & FieldData$
-
+                If Left(FieldName$, 16) = "PermittedUsers_n" And prjd.AllUsers = "" Then
+                    prjd.AllUsers = FieldData$
+                ElseIf Left(FieldName$, 16) = "PermittedUsers_n" And prjd.AllUsers <> "" Then
+                    prjd.AllUsers = prjd.AllUsers & ", " & FieldData$
+                End If
 
                 zzz = zzz + 1
         Next

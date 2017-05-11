@@ -28,11 +28,29 @@ Sub Onload(ribbon As IRibbonUI)
        RibbonID$ = ObjPtr(myRibbon)
         Call SaveRibbonID(RibbonID$)
         
-        RememberProject = CBool(PMToolkitCode1.GetConfigSetting("RememberLastProject"))
-        
-        ' get the field list
-        Call ImportFieldData("")
+
+     ' get the field list
+      Call ImportFieldData("")
                   
+                  
+
+        RememberProject = False
+       If PMToolkitCode1.GetConfigSetting("RememberLastProject") <> "" _
+           And Replace(LCase(PMToolkitCode1.GetConfigSetting("RememberLastProject")), vbCr, "") = "true" Then
+            RememberProject = True
+            ' now load the project name from data file
+            
+            
+            ' now load the project itself
+       Else
+            RememberProject = False
+       
+       End If
+    
+        
+
+                  
+        
          
 End Sub
 
@@ -62,7 +80,7 @@ Sub NewProject_Click(control As IRibbonControl)
 
     If FailText$ <> "" Then
         FailText$ = FailText$ & vbCrLf & "Cannot create New Data Store without base information."
-        result = MsgBox(FailText$, vbCritical, ProgramName$)
+        Result = MsgBox(FailText$, vbCritical, ProgramName$)
         Exit Sub
     End If
     
@@ -76,7 +94,7 @@ Sub NewProject_Click(control As IRibbonControl)
         WorkingPath$ = AddSlash(GetConfigSetting("WorkingPath"))
         
         If WorkingPath$ = "" Or DirExists(WorkingPath$) = False Then
-            result = MsgBox("Working Folder Invalid", vbCritical, ProgramName$)
+            Result = MsgBox("Working Folder Invalid", vbCritical, ProgramName$)
             Exit Sub
         End If
         
@@ -85,7 +103,7 @@ Sub NewProject_Click(control As IRibbonControl)
         
         ' ====
         If FileExists(CurrentStore$) = True Then
-            result = MsgBox("A Project Data Store with this reference code already exists!", vbCritical, ProgramName$)
+            Result = MsgBox("A Project Data Store with this reference code already exists!", vbCritical, ProgramName$)
             Exit Sub
         End If
         
@@ -109,7 +127,7 @@ Sub PickProject_Click(control As IRibbonControl)
 
 
  ' check we have the program path to save our array in
-    ProgramPath$ = CheckProgramPath
+    ProgramPath$ = PMToolkitCode1.CheckProgramPath
     
         
  ' get the current working path
@@ -120,13 +138,13 @@ Sub PickProject_Click(control As IRibbonControl)
    
    
     If InStr(vbTextCompare, LCase(PickedFile$), "t4pm_") < 1 Then
-        result = MsgBox("Not a T4PM Project Store selected", vbCritical, ProgramName$)
+        Result = MsgBox("Not a T4PM Project Store selected", vbCritical, ProgramName$)
         Exit Sub
     End If
   
   ' =======
     If FileExists(PickedFile$) = False Then
-        result = MsgBox("Invalid Project Store Selection", vbCritical, ProgramName$)
+        Result = MsgBox("Invalid Project Store Selection", vbCritical, ProgramName$)
         Exit Sub
     End If
     
@@ -151,7 +169,7 @@ Sub PickProject_Click(control As IRibbonControl)
     
 Exit Sub
 abort:
-    result = MsgBox("Invalid Project Store Selection", vbCritical, ProgramName$)
+    Result = MsgBox("Invalid Project Store Selection", vbCritical, ProgramName$)
 
 End Sub
 
@@ -167,15 +185,15 @@ Sub UploadData_Click(control As IRibbonControl)
         End If
         
           If CurrentStore$ = "" Or FileExists(CurrentStore$) = False Then
-                result = MsgBox("Please re-select Project Store", vbCritical, ProgramName$)
+                Result = MsgBox("Please re-select Project Store", vbCritical, ProgramName$)
                Exit Sub
         End If
         
         
     ' check shift key
     If IsShiftKeyDown = True Then
-        result = MsgBox("Select all worksheets for upload?", vbYesNo, ProgramName$)
-        If result = vbYes Then
+        Result = MsgBox("Select all worksheets for upload?", vbYesNo, ProgramName$)
+        If Result = vbYes Then
             Sheets.Select
         End If
     End If
@@ -187,7 +205,7 @@ Sub UploadData_Click(control As IRibbonControl)
     ' do the upload
     Call ExportDataToStore(True)
 
-
+    Call RefreshRibbon("")
     
 End Sub
 
@@ -200,7 +218,7 @@ Sub DownloadData_Click(control As IRibbonControl)
         End If
         
           If CurrentStore$ = "" Or FileExists(CurrentStore$) = False Then
-                result = MsgBox("Please re-select Project Store", vbCritical, ProgramName$)
+                Result = MsgBox("Please re-select Project Store", vbCritical, ProgramName$)
                Exit Sub
         End If
 
@@ -228,14 +246,14 @@ End Sub
 Sub SetFolder_Click(control As IRibbonControl)
 
     If IsShiftKeyDown = True Then
-        result = MsgBox("Working folder currently set to: " & vbCrLf & vbCrLf & WorkingPath$, vbInformation, ProgramName$)
+        Result = MsgBox("Working folder currently set to: " & vbCrLf & vbCrLf & WorkingPath$, vbInformation, ProgramName$)
         Exit Sub
     End If
     
     If WorkingPath$ <> "" And DirExists(WorkingPath$) = True Then
         
-        result = MsgBox("Current Working folder is valid." & vbCrLf & vbCrLf & "Change anyway?", vbInformation + vbYesNo, ProgramName$)
-        If result <> vbYes Then Exit Sub
+        Result = MsgBox("Current Working folder is valid." & vbCrLf & vbCrLf & "Change anyway?", vbInformation + vbYesNo, ProgramName$)
+        If Result <> vbYes Then Exit Sub
 
     End If
     
@@ -266,7 +284,7 @@ Sub SetFolder_Click(control As IRibbonControl)
     
   ' =======
     If DirExists(WorkingPath$) = False Then
-        result = MsgBox("Invalid Folder Selection", vbCritical, ProgramName$)
+        Result = MsgBox("Invalid Folder Selection", vbCritical, ProgramName$)
         Exit Sub
     End If
     
@@ -280,7 +298,7 @@ Sub SetFolder_Click(control As IRibbonControl)
 
 Exit Sub
 abort:
-    result = MsgBox("Invalid Folder Selection", vbCritical, ProgramName$)
+    Result = MsgBox("Invalid Folder Selection", vbCritical, ProgramName$)
 
 End Sub
 
@@ -290,21 +308,50 @@ End Sub
 'Callback for Folder onAction
 Sub Folder_Click(control As IRibbonControl)
 
-    Call Unavailable("")
-    Exit Sub
-    
-    ' check if we have a store loaded
-    
+
+   ' cehck we have a store selected, if not, grab it again
+        If CurrentStore$ = "" Then
+            Call RestoreStore("")
+        End If
+        
+          If CurrentStore$ = "" Or FileExists(CurrentStore$) = False Then
+               Result = MsgBox("Please re-select Project Store", vbCritical, ProgramName$)
+               Exit Sub
+        End If
+        
+        
     ' is shift held... if so, select folder instead of openning
-    
+        
+        If IsShiftKeyDown = True Then
+            
+            Result = MsgBox("Force re-selection of Project Folder? ", vbInformation + vbYesNo, ProgramName$)
+            If Result = vbYes Then Call SetProjectFolder("")
+            
+            Exit Sub
+        End If
     
     
   'then...
     ' check we have a folder
-    
+        
+        myFolder$ = PMToolkitCode1.GetAnyDataForHeaders("Folder Path")
+        
+        If myFolder$ = "" Then
+            Result = MsgBox("No Folder Path known." & vbCrLf & "Select now? ", vbCritical + vbYesNo, ProgramName$)
+            If Result = vbYes Then Call SetProjectFolder("")
+            Exit Sub
+        End If
+               
+        
     ' check the folder is valie
+        If DirExists(myFolder$) = False Then
+            
+            Exit Sub
+        End If
+        
     
     ' open the folder
+        Call OpenFolder(myFolder$)
     
 End Sub
 
@@ -313,16 +360,23 @@ End Sub
 'Callback for Email onAction
 Sub Email_Click(control As IRibbonControl)
 
-   Call Unavailable("")
- 
-     ' check if we have a store loaded
+
+    ' check if we have a store loaded
     
-    ' check we have a folder
     
-    ' check the folder is valie
-    
+    ' check we have a folder & check the folder is valie
+    myFolder$ = PMToolkitCode1.GetAnyDataForHeaders("Folder Path")
+    If myFolder$ <> "" And DirExists(myFolder$) = True Then Mail_savepath$ = myFolder$
+       
+
     ' create an email
-    
+    Mail_subject$ = ""
+    Mail_subject$ = Mail_subject$ & PMToolkitCode1.GetAnyDataForHeaders("Site Name") & " - "
+    Mail_subject$ = Mail_subject$ & PMToolkitCode1.GetAnyDataForHeaders("Project Description")
+    Mail_subject$ = Mail_subject$ & " (" & PMToolkitCode1.GetAnyDataForHeaders("Project Reference") & ")"
+
+   ' Mail_savepath$ = "C:"
+    Call NewMail
 
     
 End Sub
@@ -332,9 +386,12 @@ Sub RecallProject_Status(control As IRibbonControl, ByRef returnedVal)
 '
 ' Code for getPressed callback. Ribbon control checkBox
 '
-    If control.ID = "checkboxShowMessage" Then
+
+    'If control.ID = "checkboxShowMessage" Then
         returnedVal = RememberProject
-    End If
+    'End If
+    
+    
     
 End Sub
 
@@ -344,16 +401,46 @@ Sub RecallProject_Click(control As IRibbonControl, pressed As Boolean)
 '
     If control.ID = "checkboxShowMessage" Then
        RememberProject = pressed
-
     End If
     
     
+    Call SetConfigSetting("RememberLastProject", CStr(pressed))
+    
+    
+    
+End Sub
+
+
+Sub SetConfigSetting(inOption$, inParam$)
+
+    If ProgramPath$ = "" Then ProgramPath$ = PMToolkitCode1.CheckProgramPath
+    GetTxtData$ = ReadTextFile(ProgramPath$ & "UserConfigFile")
+ 
+    ' check for old
+    
+    If GetConfigSetting(inOption$) <> "" Then
+        OldSetting$ = inOption$ + "=" + GetConfigSetting(inOption$)
+        
+        GetTxtData$ = Replace(GetTxtData$, OldSetting$, inOption$ + "=" + inParam$)
+        
+
+    Else
+        GetTxtData$ = GetTxtData$ & inOption$ + "=" + inParam$ & vbCrLf
+    End If
+    
+    
+    Call MakeTextFile(GetTxtData$, ProgramPath$ & "UserConfigFile")
+    
+
 End Sub
 
 
 Function GetConfigSetting(inOption$)
     
     ' ....
+If ProgramPath$ = "" Then ProgramPath$ = PMToolkitCode1.CheckProgramPath
+    GetTxtData$ = ReadTextFile(ProgramPath$ & "UserConfigFile")
+ 
     GetTxtData$ = ReadTextFile(ProgramPath$ & "UserConfigFile")
   
        GetPoint = InStr(vbTextCompare, LCase(GetTxtData$), LCase(inOption$) & "=")
@@ -401,7 +488,7 @@ Sub GetList_Click(control As IRibbonControl)
 
 
  ' check we have the program path to save our array in
-    ProgramPath$ = CheckProgramPath
+    ProgramPath$ = PMToolkitCode1.CheckProgramPath
 
  ' get the current working path
         WorkingPath$ = AddSlash(GetConfigSetting("WorkingPath"))
@@ -514,7 +601,7 @@ skipselector:
 
     Call MakeTextFile(MajorFieldData$, ProgramPath$ & "FieldData")
     
-    result = MsgBox("Field List Updated.", vbInformation, ProgramName$)
+    Result = MsgBox("Field List Updated.", vbInformation, ProgramName$)
 
 
     
@@ -524,7 +611,7 @@ closeabort:
     FieldExc.Close
     
 abort:
-    result = MsgBox("Invalid Field List Selection", vbCritical, ProgramName$)
+    Result = MsgBox("Invalid Field List Selection", vbCritical, ProgramName$)
     
 End Sub
 
@@ -538,7 +625,7 @@ End Sub
 
 Sub Unavailable(dummy$)
 
-    result = MsgBox("Function not yet available.", vbCritical, ProgramName$)
+    Result = MsgBox("Function not yet available.", vbCritical, ProgramName$)
     
 End Sub
 
@@ -604,7 +691,7 @@ End Sub
 Private Function CheckUserConfig() As Boolean
         
     CheckUserConfig = False
-       ProgramPath$ = CheckProgramPath
+       ProgramPath$ = PMToolkitCode1.CheckProgramPath
 
 ' check the ...
     If FileExists(ProgramPath$ & "UserConfigFile") = False Then
@@ -617,7 +704,7 @@ Private Function CheckUserConfig() As Boolean
 End Function
     
     
-Private Function CheckProgramPath() As String
+Public Function CheckProgramPath() As String
 
 ' = = =
        ConfigFile$ = Environ("appdata")
@@ -648,11 +735,11 @@ Sub ImportFieldData(dummy$)
     MajorFieldData$ = ""
   
     ' routine check
-    ProgramPath$ = CheckProgramPath
+    ProgramPath$ = PMToolkitCode1.CheckProgramPath
         
     ' field data exists?
     If FileExists(ProgramPath$ & "FieldData") = False Then
-        result = MsgBox("No Field Data available locally." & vbCrLf & vbclr & "Please re-import.", vbCritical, ProgramName$)
+        Result = MsgBox("No Field Data available locally." & vbCrLf & vbclr & "Please re-import.", vbCritical, ProgramName$)
         Exit Sub
     End If
     

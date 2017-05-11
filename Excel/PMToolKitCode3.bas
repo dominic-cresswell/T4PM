@@ -5,6 +5,9 @@ Public ProjectReadDataArray(9999, 4)
 
 
 Sub PullWriteDataFromWorksheets(dummy$)
+ '
+    Call ClearWriteData("")
+    
 
 ' get the valid field data
     Call ImportFieldData("")
@@ -63,21 +66,21 @@ skip:
 
 ' =====  check we have a permitted user
 
-    For nnn = 0 To 9999
-        TempField$ = LCase(ProjectWriteDataArray(nnn, 0))
+   ' For nnn = 0 To 9999
+    '    TempField$ = LCase(ProjectWriteDataArray(nnn, 0))
         
-            If Left(LCase(ProjectWriteDataArray(nnn, 0)), Len("permittedusers")) = "permittedusers" Then
-                  Exit For
-            ElseIf ProjectWriteDataArray(nnn, 0) = "" Then
-                ProjectWriteDataArray(nnn, 0) = "PermittedUsers_n1"
-                ProjectWriteDataArray(nnn, 1) = Environ("username")
-                ProjectWriteDataArray(nnn, 2) = "text"
-                Exit For
+    '        If Left(LCase(ProjectWriteDataArray(nnn, 0)), Len("permittedusers")) = "permittedusers" Then
+    '              Exit For
+    '        ElseIf ProjectWriteDataArray(nnn, 0) = "" Then
+    '            ProjectWriteDataArray(nnn, 0) = "PermittedUsers_n1"
+    '            ProjectWriteDataArray(nnn, 1) = Environ("username")
+    '            ProjectWriteDataArray(nnn, 2) = "text"
+    '            Exit For
             
-            End If
+    '        End If
         
         
-    Next nnn
+    'Next nnn
     
 
 Exit Sub
@@ -117,7 +120,7 @@ PlaceInArray:
                 longmsg$ = longmsg$ & "Worksheet: '" & GetRangeSheet$ & "'" & vbCrLf
                  longmsg$ = longmsg$ & "Cell Name: '" & GetRangeName$ & "' "
                 
-                result = MsgBox(longmsg$, vbCritical, ProgramName$)
+                Result = MsgBox(longmsg$, vbCritical, ProgramName$)
             End If
             
             ' at this point, we passed, but we dont care.
@@ -131,7 +134,7 @@ PlaceInArray:
         
         ' check if the data differs
             If ProjectWriteDataArray(nnn, 0) <> "" And ProjectWriteDataArray(nnn, 0) <> FoundRef$ Then
-               result = MsgBox("Beware: Repeated data (" & TempRef$ & ") is entered with varying values.", vbCritical, ProgramName$)
+               Result = MsgBox("Beware: Repeated data (" & TempRef$ & ") is entered with varying values.", vbCritical, ProgramName$)
             End If
         
     
@@ -177,7 +180,7 @@ PlaceInArray:
                  ProjectWriteDataArray(nnn, 3) = ""
                  ProjectWriteDataArray(nnn, 4) = ""
                  
-                result = MsgBox("Beware: Data for (" & TempRef$ & ") does not match data type and will not be stored.", vbCritical, ProgramName$)
+                Result = MsgBox("Beware: Data for (" & TempRef$ & ") does not match data type and will not be stored.", vbCritical, ProgramName$)
                 Exit For
             ElseIf ProjectWriteDataArray(nnn, 4) = "error-null" Then
                  ProjectWriteDataArray(nnn, 0) = ""

@@ -84,7 +84,7 @@ Sub SaveRibbonID(inRibbon$)
     If FileExists(SaveFile$) = True Then Kill SaveFile$
 
     Set fsoObject = CreateObject("Scripting.FileSystemObject")
-    Set my_file = fsoObject.opentextfile(SaveFile$, 2, True)
+    Set my_file = fsoObject.OpenTextFile(SaveFile$, 2, True)
     my_file.WriteLine inRibbon$
     my_file.Close
 
@@ -103,7 +103,7 @@ Function GetRibbonID() As String
     
     
     Set fsoObject = CreateObject("Scripting.FileSystemObject")
-    Set my_file = fsoObject.opentextfile(SaveFile$, 1)
+    Set my_file = fsoObject.OpenTextFile(SaveFile$, 1)
     GetRibbonID = my_file.readline
     my_file.Close
 

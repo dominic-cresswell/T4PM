@@ -1,4 +1,6 @@
 Attribute VB_Name = "RibbonCalls2"
+' ======================= BUTTONS
+
 
 'Callback for SetFieldButton onAction
 Sub SetTemplateField_Click(control As IRibbonControl)
@@ -10,7 +12,7 @@ Sub SetTemplateField_Click(control As IRibbonControl)
       
     ' check selection
         If Selection.Count < 1 Then
-        result = MsgBox("No cells/area selected.", vbCritical, ProgramName$)
+        Result = MsgBox("No cells/area selected.", vbCritical, ProgramName$)
         Exit Sub
         End If
         
@@ -21,7 +23,7 @@ Sub SetTemplateField_Click(control As IRibbonControl)
     ' nothing selected
     If FieldRefOutput$ <> "" Then
     Else
-        result = MsgBox("No Dynamic Field selected", vbCritical, ProgramName$)
+        Result = MsgBox("No Dynamic Field selected", vbCritical, ProgramName$)
         Exit Sub
     End If
     
@@ -34,8 +36,8 @@ On Error Resume Next
     If tempName Is Nothing Then
         
     Else
-        result = MsgBox("This Dynamic Field already in " & vbCrLf & "use on this worksheet." & vbCrLf & vbCrLf & "Delete Previous?", vbCritical + vbYesNo, ProgramName$)
-        If result = vbYes Then
+        Result = MsgBox("This Dynamic Field already in " & vbCrLf & "use on this worksheet." & vbCrLf & vbCrLf & "Delete Previous?", vbCritical + vbYesNo, ProgramName$)
+        If Result = vbYes Then
         ActiveSheet.Names(tempName.Name).Delete
         Else
         Exit Sub
@@ -64,9 +66,6 @@ Sub ClearFieldButton_Click(control As IRibbonControl)
 End Sub
 
 
-' ==============================================
-
-
 Sub MakeHighlights_Click(control As IRibbonControl)
 
   Call ColourHighlights(False)
@@ -77,6 +76,10 @@ Sub ClearHighlights_Click(control As IRibbonControl)
   Call ColourHighlights(True)
 
 End Sub
+
+
+'====
+
 
 Sub ColourHighlights(doClear As Boolean)
 
@@ -90,9 +93,12 @@ Sub ColourHighlights(doClear As Boolean)
                 For Each subName In sh.Names
                   
             ' this is the bit that colours it in
-            
-                  realRangeName = Replace(subName.Name, sh.Name & "!", "")
-                  Set myRange = sh.Range(realRangeName)
+
+                   If Left(subName.Name, 1) = "'" Then realRangeName = Replace(subName.Name, "'" & sh.Name & "'!", "")
+                   If Left(subName.Name, 1) <> "'" Then realRangeName = Replace(subName.Name, sh.Name & "!", "")
+                   
+                   On Error Resume Next
+                   Set myRange = sh.Range(realRangeName)
                   
                       If doClear = True Then
                         GoSub ClearColour

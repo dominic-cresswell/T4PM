@@ -153,6 +153,11 @@ For NewCount = 1 To CountS
 
      If GetValue$ <> PP$ And NewCount < CountS Then
             newLine$ = newLine$ + GetValue$
+        ElseIf NewCount = CountS Then
+            newLine$ = newLine$ + GetValue$
+            a.WriteLine newLine$
+                        newLine$ = ""
+        
         Else
           '  Debug.Print newLine$
             a.WriteLine newLine$

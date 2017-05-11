@@ -7,17 +7,13 @@ Sub Info_Click(control As IRibbonControl)
     a$ = ""
     a$ = a$ & ProgramName$ & " - Information" & vbCrLf
     a$ = a$ & "" & vbCrLf
-    a$ = a$ & "Programmed and Developed by;" & vbCrLf
-    a$ = a$ & "  Dominic Cresswell in 2016-" & Year(Date) & "." & vbCrLf
+    a$ = a$ & "Programmed and Developed from 2016-" & Year(Date) & "." & vbCrLf
     a$ = a$ & "" & vbCrLf
     a$ = a$ & "Used under agreed terms." & vbCrLf
     
-    a$ = a$ & "" & vbCrLf
-    a$ = a$ & "E-mail:" & vbCrLf
-    a$ = a$ & " dominic.cresswell@gen2.co.uk" & vbCrLf
     
     a$ = a$ & "" & vbCrLf
-    a$ = a$ & "Bug-Reports:" & vbCrLf
+    a$ = a$ & "Bug-Reports should be logged via:" & vbCrLf
     a$ = a$ & " https://github.com/dominic-cresswell/T4PM" & vbCrLf
 
     a$ = a$ & "" & vbCrLf
