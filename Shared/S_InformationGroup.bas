@@ -12,6 +12,7 @@ Sub Info_Click(control As IRibbonControl)
     a$ = a$ & "" & vbCrLf
     a$ = a$ & "Used under agreed terms." & vbCrLf
     
+    a$ = a$ & "Version S" & Format(SharedVersion, "000") & UCase(Left(Replace(Application.Name, "Microsoft ", ""), 1)) & Format(ApplicationVersion, "000") & vbCrLf
     
     a$ = a$ & "" & vbCrLf
     a$ = a$ & "Bug-Reports should be logged via:" & vbCrLf

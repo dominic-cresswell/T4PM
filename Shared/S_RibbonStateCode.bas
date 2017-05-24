@@ -1,6 +1,7 @@
 Attribute VB_Name = "S_RibbonStateCode"
 Option Private Module
 
+Public Const SharedVersion = 1
 
 Public MyTag As String
 Public VisibleState As Boolean
