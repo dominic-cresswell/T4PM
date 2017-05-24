@@ -10,7 +10,9 @@
 			id="InformationButton"
 			label="Info."
 			imageMso="Info"
-			onAction="S_InformationGroup.Info_Click"/>
+			onAction="S_InformationGroup.Info_Click"
+			screentip="T4PM Information"
+			supertip="Details of version, bug-reporting etc."/>
 
          <button 	size = "large"
 			id="HelpButton"
