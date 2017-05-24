@@ -1,4 +1,5 @@
 Attribute VB_Name = "S_RibbonStateCode"
+Option Private Module
 
 
 Public MyTag As String

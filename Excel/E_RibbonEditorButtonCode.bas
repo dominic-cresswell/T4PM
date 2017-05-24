@@ -1,4 +1,7 @@
-Attribute VB_Name = "RibbonCalls2"
+Attribute VB_Name = "E_RibbonEditorButtonCode"
+Option Private Module
+
+
 ' ======================= BUTTONS
 
 
@@ -52,6 +55,28 @@ End Sub
 
 
 
+
+Sub SetupField(dummy$)
+
+    ' if the array is empty, reload it
+    If CStr(FieldListArray(0, 1)) = "" Then
+        Call ImportFieldData("")
+    End If
+
+    ' if the array is *still* empty, tell the user to import again
+    If CStr(FieldListArray(0, 1)) = "" Then
+       Exit Sub
+    End If
+    
+  ' we made it here, we must be OK.
+  
+
+  '
+    Call RefreshFieldList("")
+            
+    FieldRefForm.Show
+        
+End Sub
 
 Sub RemoveFieldButton_Click(control As IRibbonControl)
 

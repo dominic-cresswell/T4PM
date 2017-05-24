@@ -1,4 +1,5 @@
 Attribute VB_Name = "S_EmailCode"
+Option Private Module
 
 
 Public Mail_from$, Mail_to$(40), Mail_cc$(40), Mail_attach$(40), Mail_savepath$

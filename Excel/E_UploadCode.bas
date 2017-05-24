@@ -1,14 +1,54 @@
-Attribute VB_Name = "PMToolKitCode3"
+Attribute VB_Name = "E_UploadCode"
+Option Private Module
 
-Public ProjectWriteDataArray(9999, 4)
-Public ProjectReadDataArray(9999, 4)
 
+' .... we lost the store, find a cheap/hack way to restore it!
+
+
+Sub RestoreStore(dummy$)
+
+    ' grab the working path
+            
+        If WorkingPath$ = "" Then
+            WorkingPath$ = AddSlash(GetConfigSetting("WorkingPath"))
+        End If
+        
+        If WorkingPath$ <> "" And DirExists(WorkingPath$) = True Then
+            TempStore$ = WorkingPath$
+        
+        End If
+        
+    ' grab the reference number
+     If GetTempData_WriteBuffer("Project Reference") = "" Then
+         Call PullWriteDataFromWorksheets("")
+     End If
+     
+     
+     TempRef$ = GetTempData_WriteBuffer("Project Reference")
+            
+     If TempRef$ <> "" And TempStore$ <> "" Then
+         TempStore$ = TempStore$ & TempRef$
+     End If
+     
+     
+    ' check file exists
+    If FileExists("T4PM" & TempStore$ & ".xls") = False Then
+            TempStore$ = ""
+    End If
+
+    If TempStore$ <> "" Then CurrentStore$ = "T4PM" & TempStore$ & ".xls"
+
+End Sub
+
+
+' =================== moving data upstream
 
 Sub PullWriteDataFromWorksheets(dummy$)
- '
+     
+     
+' +++++++++
     Call ClearWriteData("")
     
-
 ' get the valid field data
     Call ImportFieldData("")
 
@@ -68,7 +108,6 @@ skip:
 
    ' For nnn = 0 To 9999
     '    TempField$ = LCase(ProjectWriteDataArray(nnn, 0))
-        
     '        If Left(LCase(ProjectWriteDataArray(nnn, 0)), Len("permittedusers")) = "permittedusers" Then
     '              Exit For
     '        ElseIf ProjectWriteDataArray(nnn, 0) = "" Then
@@ -76,10 +115,7 @@ skip:
     '            ProjectWriteDataArray(nnn, 1) = Environ("username")
     '            ProjectWriteDataArray(nnn, 2) = "text"
     '            Exit For
-            
     '        End If
-        
-        
     'Next nnn
     
 
@@ -285,8 +321,22 @@ End Sub
        ''     End If
             
                
+               
+
+Sub ClearWriteData(dummy$)
+
+    For zzz = 0 To 9999
+     For QQQ = 0 To 4
+        ProjectWriteDataArray(zzz, QQQ) = ""
+     Next
+    Next
+    
+End Sub
+               
+               
+               
             
-Function GetTempData(inData$) As String
+Function GetTempData_WriteBuffer(inData$) As String
 
     CheckField$ = inData$
     CheckField$ = LCase(CheckField$)
@@ -301,7 +351,7 @@ Function GetTempData(inData$) As String
             
             If CheckField$ = Left(LCase(TempField$), Len(CheckField$)) Then
              '   Debug.Print "   =   "; ProjectWriteDataArray(zzz, 1)
-                GetTempData = ProjectWriteDataArray(zzz, 1)
+                GetTempData_WriteBuffer = ProjectWriteDataArray(zzz, 1)
                 Exit For
             End If
         
@@ -309,27 +359,5 @@ Function GetTempData(inData$) As String
 
 End Function
 
-Function GetTempData2(inData$) As String
-
-    CheckField$ = inData$
-    CheckField$ = LCase(CheckField$)
-    CheckField$ = ClearSpecialCharacters(CheckField$)
-
-    ' check the
-         For zzz = 0 To 9999
-                  
-            TempField$ = LCase(ProjectReadDataArray(zzz, 0))
-            TempField$ = ClearSpecialCharacters(TempField$)
-            
-            
-            If CheckField$ = Left(LCase(TempField$), Len(CheckField$)) Then
-             '   Debug.Print "   =   "; ProjectWriteDataArray(zzz, 1)
-                GetTempData2 = ProjectReadDataArray(zzz, 1)
-                Exit For
-            End If
-        
-        Next
-
-End Function
 
 

@@ -1,9 +1,7 @@
-Attribute VB_Name = "PMToolkitCode5"
+Attribute VB_Name = "S_ProjectListFormCode"
+Option Private Module
 
 Public ProjectStoreChoice$
-
-
-
 
 
 
@@ -15,7 +13,7 @@ Function FindProjectSelection(inPath$)
     
     
  ' routine check
-    ProgramPath$ = AddSlash(PMToolkitCode1.CheckProgramPath)
+    ProgramPath$ = AddSlash(S_UserConfigCode.CheckProgramPath)
     
    ' +++++++++++
     If RememberProject = True Then
@@ -27,7 +25,6 @@ Function FindProjectSelection(inPath$)
         If FileExists(ProgramPath$ & "LastProject") Then Kill ProgramPath$ & "LastProject"
         
     End If
-    
     
 End Function
 
@@ -117,107 +114,49 @@ Sub DoProjectListRefresh(inPath$)
         'Stop
         
     ' check we have the program path to save our array in
-         If ProgramPath$ = "" Then ProgramPath$ = PMToolkitCode1.CheckProgramPath
-        ' save list to user folder
+         If ProgramPath$ = "" Then ProgramPath$ = S_UserConfigCode.CheckProgramPath
+         
+      ' save list to user folder
         If ProgramPath$ <> "" And DirExists(ProgramPath$) Then
          Call MakeTextFile(ProjectListData$, ProgramPath$ & "ProjectList")
         End If
         
 End Sub
 
-Function CapText(inText$, amount As Long) As String
-
-    CapText = inText$
-    If Len(CapText) > amount Then CapText = Left(CapText, amount - 3) & "..."
-
-End Function
 
 
-
-Function GetTopData(inFile$) As ProjectData
-    Dim prjd As ProjectData
-    
-    prjd.SiteName = ""
-    prjd.ProjectDescription = ""
-    prjd.ProjectReference = ""
-    prjd.AllUsers = ""
+Function VerifyStoreUsers(inFile$) As Boolean
 
 
-' invoke a new Excel
-    Dim exlApp As Excel.Application
-    Set exlApp = CreateObject("Excel.Application")
-    exlApp.visible = False
-    
-    If inFile$ = "" Then Exit Function
-    
-       
-    Dim exlDoc As Workbook
-    On Error GoTo fail2:
-    Set exlDoc = exlApp.Workbooks.Open(inFile$)
+    If FileExists(inFile$) = False Or inFile$ = "" Then Exit Function
 
-    
-    Dim exlSheet As Worksheet
-    On Error Resume Next
-    Set exlSheet = exlDoc.Worksheets.Item("ProjectStore")
-    
-    If exlSheet Is Nothing Then GoTo fail:
+    If IsShiftKeyDown = True Then
 
-
-   ' we made it!
-
-      ' find existing data
-        For QQQ = 1 To 9999
-
-                FieldName$ = exlSheet.Columns(1).Rows(QQQ)
-                FieldData$ = exlSheet.Columns(2).Rows(QQQ)
-            '    FieldStamp$ = exlSheet.Columns(3).Rows(qqq)
-                
-                If FieldName$ = "" Then Exit For
-                
-             '   ProjectReadDataArray(zzz, 0) = FieldName$
-             '   ProjectReadDataArray(zzz, 1) = FieldData$
-               ' ProjectReadDataArray(zzz, 2) = FieldStamp$
-                
-                
-                If FieldName$ = "SiteName_n0" Then prjd.SiteName = FieldData$
-                If FieldName$ = "ProjectDescription_n0" Then prjd.ProjectDescription = FieldData$
-                If FieldName$ = "ProjectReference_n0" Then prjd.ProjectReference = FieldData$
-                
-                If Left(FieldName$, 16) = "PermittedUsers_n" And prjd.AllUsers = "" Then
-                    prjd.AllUsers = FieldData$
-                ElseIf Left(FieldName$, 16) = "PermittedUsers_n" And prjd.AllUsers <> "" Then
-                    prjd.AllUsers = prjd.AllUsers & ", " & FieldData$
-                End If
-
-                zzz = zzz + 1
-        Next
-
-    exlDoc.Close (False)
-    exlApp.Quit
+            Password$ = InputBoxDK("Enter override password", ProgramName$)
+            If Password$ <> "onetwothree" Then
+                VerifyStoreUsers = False
+                Result = MsgBox("Password incorrect", vbCritical, ProgramName$)
+            Else
+                VerifyStoreUsers = True
+                Exit Function
+            End If
+            
+    End If
     
     
-    GetTopData = prjd
-    
-  '  If showmsg = True Then Result = MsgBox("Data Downloaded", vbInformation, ProgramName$)
-    Exit Function
-    
-    
-
-    
-    
-    
-
-    
-    
-    
-
-fail:
-    exlDoc.Close
-fail2:
-    exlApp.Quit
-    'result = MsgBox("No worksheet 'Project Store' within working store.", vbCritical, ProgramName$)
+       Dim prjd As ProjectData
+        prjd = GetTopData(inFile$)
         
-    GetTopData = prjd
-    
+        Debug.Print "file: " & inFile$
+        Debug.Print "users: " & prjd.AllUsers
+        
+        If InStr(vbTextCompare, LCase(prjd.AllUsers), LCase(Environ("UserName"))) > 0 Then
+            VerifyStoreUsers = True
+        Else
+            VerifyStoreUsers = False
+        End If
+        
 End Function
+
+
 

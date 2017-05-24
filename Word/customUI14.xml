@@ -44,12 +44,6 @@
  <group id="PMGrp4" label="Data Tools" >
 
          <button 	size = "large"
-			id="NewProject"
-			label="New Project Store"
-			imageMso="GroupProjectInsert"
-			onAction="E_RibbonButtonCode.NewProject_Click"/>
-
-         <button 	size = "large"
 			id="PickProject"
 			label="Select Project Store"
 			imageMso="LinksBetweenProjects"
@@ -103,23 +97,11 @@
 <tab id="PMTab2" label="GEN² T4PM Editor" getVisible="EditorTab">
  <group id="PMGrp3" label="Template Setup" >
 
-
          <button 	
 			id="SetFieldButton"
 			label="Set Dynamic Field"
 			imageMso="TemplateAssociateToList"
-			onAction="E_RibbonEditorButtonCode.SetTemplateField_Click"/>
-
-         <button 	id="RemoveFieldButton"
-			label="Delete Dynamic Field"
-			imageMso="BaselineClear"
-			onAction="E_RibbonEditorButtonCode.RemoveFieldButton_Click"/>
-
-         <button 	id="ClearFieldButton"
-			label="Clear Dynamic Fields"
-			imageMso="DataValidationClearValidationCircles"
-			onAction="E_RibbonEditorButtonCode.ClearFieldButton_Click"/>
-
+			onAction="W_RibbonEditorButtonCode.SetTemplateField_Click"/>
 
          <button 	id="MakeHighlights"
 			label="Highlight Dynamic Field(s)"

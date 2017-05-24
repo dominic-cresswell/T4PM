@@ -1,4 +1,6 @@
 Attribute VB_Name = "S_KeyPressDetection"
+Option Private Module
+
 Option Explicit
 Option Compare Text
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -14,7 +16,7 @@ Option Compare Text
 ' Declaration of GetKeyState API function. This
 ' tests the state of a specified key.
 ''''''''''''''''''''''''''''''''''''''''''''''''''''
-Private Declare Function GetKeyState Lib "User32" ( _
+Private Declare Function GetKeyState Lib "user32" ( _
     ByVal nVirtKey As Long) As Integer
     
 ''''''''''''''''''''''''''''''''''''''''''

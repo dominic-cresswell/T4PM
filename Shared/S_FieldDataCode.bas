@@ -1,4 +1,4 @@
-Attribute VB_Name = "PMToolkitCode2"
+Attribute VB_Name = "S_FieldDataCode"
 Public FieldRefOutput$
 
 
@@ -13,7 +13,7 @@ Sub SetProjectFolder(dummy$)
         End If
         
           If CurrentStore$ = "" Or FileExists(CurrentStore$) = False Then
-               Result = MsgBox("Please re-select Project Store", vbCritical, ProgramName$)
+               Result = MsgBox("Please re-select T4PM Project Store", vbCritical, ProgramName$)
                Exit Sub
         End If
                 
@@ -39,11 +39,6 @@ Sub SetProjectFolder(dummy$)
 End Sub
 
 
-Function GetProjectData(findField$)
-
-    'GetProjectData = "St James Infants"
-
-End Function
 
 Sub OptionsBoxUpdate(dummy$)
 
@@ -163,7 +158,6 @@ End Sub
 
 Sub TextFieldUpdate(dummy$)
 
-
     If FieldRefForm.FieldRefList.ListIndex = 0 And FieldRefForm.FieldRefList.Selected(0) = False Then
         FieldRefForm.DataTypeText = "No field Selected"
         FieldRefForm.RefText = "n/a"
@@ -189,32 +183,9 @@ Sub TextFieldUpdate(dummy$)
     End If
     
     
-    
-
 End Sub
 
 
-Sub SetupField(dummy$)
-
-    ' if the array is empty, reload it
-    If CStr(FieldListArray(0, 1)) = "" Then
-        Call ImportFieldData("")
-    End If
-
-    ' if the array is *still* empty, tell the user to import again
-    If CStr(FieldListArray(0, 1)) = "" Then
-       Exit Sub
-    End If
-    
-  ' we made it here, we must be OK.
-  
-
-  '
-    Call RefreshFieldList("")
-            
-    FieldRefForm.Show
-        
-End Sub
 
 Sub GetCollectionList(dummy$)
 
@@ -278,5 +249,67 @@ Sub RefreshFieldList(dummy$)
         End If
 
 
+End Sub
+
+
+
+Sub ImportFieldData(dummy$)
+
+   ' but we must clear the list first!!
+    For rrr = 0 To 9999
+        For eee = 0 To 4
+            FieldListArray(rrr, eee) = ""
+        Next
+    Next
+
+    MajorFieldData$ = ""
+  
+    ' routine check
+    ProgramPath$ = S_UserConfigCode.CheckProgramPath
+        
+    ' field data exists?
+    If FileExists(ProgramPath$ & "FieldData") = False Then
+        Result = MsgBox("No Field Data available locally." & vbCrLf & vbclr & "Please re-import.", vbCritical, ProgramName$)
+        Exit Sub
+    End If
+    
+    'load data
+    MajorFieldData$ = ReadTextFile(ProgramPath$ & "FieldData")
+    
+
+    
+    ' process data
+     
+     For YYY = 0 To 9999
+     For XXX = 0 To 4
+     FieldListArray(YYY, XXX) = ""
+     Next
+     Next
+    
+    XXX = 0
+    YYY = 0
+    For Z = 1 To Len(MajorFieldData$)
+        CheckMe$ = Mid(MajorFieldData$, Z, 1)
+        If Asc(CheckMe$) <> 255 Then
+            GetData$ = GetData$ & CheckMe$
+        Else
+            
+            'Debug.Print GetData$
+            
+            
+            FieldListArray(YYY, XXX) = GetData$
+            XXX = XXX + 1
+            If XXX = 5 Then
+                XXX = 0
+                YYY = YYY + 1
+            End If
+            If YYY >= 9999 Then
+                Exit For
+            End If
+            
+            GetData$ = ""
+        End If
+    Next
+    
 End Sub
 

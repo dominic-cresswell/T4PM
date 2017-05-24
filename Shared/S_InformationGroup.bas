@@ -1,4 +1,5 @@
 Attribute VB_Name = "S_InformationGroup"
+Option Private Module
 
 
 'Callback for InformationButton onAction
@@ -43,5 +44,13 @@ Sub Help_Click(control As IRibbonControl)
     MsgBox a$, vbExclamation, ProgramName$
  
  
+End Sub
+
+
+
+Sub Unavailable(dummy$)
+
+    Result = MsgBox("Function not yet available.", vbCritical, ProgramName$)
+    
 End Sub
 

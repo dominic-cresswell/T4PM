@@ -1,5 +1,5 @@
 Attribute VB_Name = "E_PDF_Printer"
-
+Option Private Module
 
 
 
@@ -100,7 +100,7 @@ StolenCode:
     exlApp.visible = False
 
     If CurrentStore$ = "" Then
-            Result = MsgBox("No Project Store selected.", vbCritical, ProgramName$)
+            Result = MsgBox("No T4PM Project Store selected.", vbCritical, ProgramName$)
         Exit Sub
 
     End If

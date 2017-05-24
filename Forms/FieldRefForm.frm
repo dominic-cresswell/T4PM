@@ -29,7 +29,6 @@ End Sub
 
 Private Sub CreateField_Click()
 
-
     FieldRefOutput$ = ""
     
   ' intro
@@ -56,7 +55,7 @@ Private Sub CreateField_Click()
     GetListData$ = CStr(FieldRefForm.FieldRefList.Value)
 
     If GetListData$ = "" Then
-        result = MsgBox("No Field Data Selected", vbCritical, ProgramName$)
+        Result = MsgBox("No Field Data Selected", vbCritical, ProgramName$)
         Exit Sub
     End If
     
@@ -199,7 +198,7 @@ Private Sub NumberCombo_AfterUpdate()
         Exit Sub
     End If
     
-    result = MsgBox("Enter numeric values only", vbCritical, ProgramName$)
+    Result = MsgBox("Enter numeric values only", vbCritical, ProgramName$)
     
     
     

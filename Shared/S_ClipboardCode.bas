@@ -5,16 +5,16 @@ Declare Function GlobalLock Lib "kernel32" (ByVal hMem As Long) _
    As Long
 Declare Function GlobalAlloc Lib "kernel32" (ByVal wFlags As Long, _
    ByVal dwBytes As Long) As Long
-Declare Function CloseClipboard Lib "User32" () As Long
-Declare Function OpenClipboard Lib "User32" (ByVal hwnd As Long) _
+Declare Function CloseClipboard Lib "user32" () As Long
+Declare Function OpenClipboard Lib "user32" (ByVal hwnd As Long) _
    As Long
-Declare Function EmptyClipboard Lib "User32" () As Long
+Declare Function EmptyClipboard Lib "user32" () As Long
 Declare Function lstrcpy Lib "kernel32" (ByVal lpString1 As Any, _
    ByVal lpString2 As Any) As Long
 
-Declare Function SetClipboardData Lib "User32" (ByVal wFormat _
+Declare Function SetClipboardData Lib "user32" (ByVal wFormat _
    As Long, ByVal hMem As Long) As Long
-Declare Function GetClipboardData Lib "User32" (ByVal wFormat As _
+Declare Function GetClipboardData Lib "user32" (ByVal wFormat As _
    Long) As Long
 
 

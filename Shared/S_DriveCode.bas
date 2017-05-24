@@ -1,4 +1,5 @@
 Attribute VB_Name = "S_DriveCode"
+Option Private Module
 
 
 
@@ -94,7 +95,7 @@ Public Declare Function ShellExecute Lib "shell32.dll" _
     ByVal lpszFile As String, ByVal lpszParams As String, _
     ByVal LpszDir As String, ByVal FsShowCmd As Long) _
     As Long
-Public Declare Function GetDesktopWindow Lib "User32" () As Long
+Public Declare Function GetDesktopWindow Lib "user32" () As Long
 Const SW_SHOWNORMAL = 1
 
 Private Declare Function GetDriveType Lib "kernel32" _
