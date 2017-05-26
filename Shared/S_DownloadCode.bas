@@ -1,5 +1,114 @@
 Attribute VB_Name = "S_DownloadCode"
 
+
+
+Sub RestoreStore(dummy$)
+
+' the path
+    If ProgramPath$ = "" Then ProgramPath$ = AddSlash(S_UserConfigCode.CheckProgramPath)
+
+   ' restore using RememberProject
+'    If RememberProject = True Then
+    If FileExists(ProgramPath$ & "LastProject") = True Then
+        getProject$ = ReadTextFile(ProgramPath$ & "LastProject")
+        Call LoadProjectStore(getProject$)
+        Exit Sub
+    End If
+    
+    If Application.Name = "Microsoft Word" Then Exit Sub
+
+
+
+
+  ' this is a nasty bodge, specifcally for the Excel version
+
+    If Application.Name = "Microsoft Excel" Then
+
+        ' grab the working path
+                    If WorkingPath$ = "" Then
+                        WorkingPath$ = AddSlash(GetConfigSetting("WorkingPath"))
+                    End If
+                    
+                    If WorkingPath$ <> "" And DirExists(WorkingPath$) = True Then
+                        TempStore$ = WorkingPath$
+                    End If
+                    
+        ' grab the reference number
+                 If E_UploadCode.GetTempData_WriteBuffer("Project Reference") = "" Then
+                     Call PullWriteDataFromWorksheets("")
+                 End If
+             
+                 
+                 TempRef$ = E_UploadCode.GetTempData_WriteBuffer("Project Reference")
+                        
+                 If TempRef$ <> "" And TempStore$ <> "" Then
+                     TempStore$ = TempStore$ & TempRef$
+                 End If
+                 
+                 
+        ' check file exists
+                If FileExists("T4PM" & TempStore$ & ".xls") = False Then
+                        TempStore$ = ""
+                End If
+            
+                If TempStore$ <> "" Then CurrentStore$ = "T4PM" & TempStore$ & ".xls"
+                Call LoadProjectStore(CurrentStore$)
+
+    End If
+End Sub
+
+
+
+
+
+Sub LoadProjectStore(inFile$)
+
+    inFile$ = Replace(inFile$, vbCrLf, "")
+    inFile$ = Replace(inFile$, vbCr, "")
+    inFile$ = Replace(inFile$, vbLf, "")
+    
+' check the file is a T4PM
+    If InStr(vbTextCompare, LCase(inFile$), "t4pm_") < 1 Then
+        Result = MsgBox("No valid T4PM Project Store selected", vbCritical, ProgramName$)
+        Exit Sub
+    End If
+  
+  ' check it exist!
+  ' =======
+    If FileExists(inFile$) = False Then
+        Result = MsgBox("Invalid T4PM Project Store Selection", vbCritical, ProgramName$)
+        Exit Sub
+    End If
+    
+
+    ' but are we permitted to use this
+
+    If VerifyStoreUsers(inFile$) = False Then
+        inFile$ = ""
+        Result = MsgBox("You are not a permitted user for this T4PM Project Store.", vbCritical, ProgramName$)
+        Exit Sub
+    End If
+    
+    DoEvents
+    
+        CurrentStore$ = inFile$
+    ' we got through!
+    
+     Call ClearReadData("")
+     DoEvents
+  '  Call RestoreStore("")
+     Call ImportDataFromStore("")
+        
+        
+     Call RefreshRibbon("")
+    
+    
+Exit Sub
+abort:
+    Result = MsgBox("Invalid T4PM Project Store Selection", vbCritical, ProgramName$)
+End Sub
+
+
 Sub ImportDataFromStore(dummy$)
 
 ' invoke a new Excel

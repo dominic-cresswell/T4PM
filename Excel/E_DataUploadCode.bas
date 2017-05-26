@@ -3,19 +3,28 @@ Option Private Module
 
 Function GetLiveReferenceCode() As String
 
-
     For Each sh In ActiveWorkbook.Sheets
         For Each nm In sh.Names
         
             If InStr(vbTextCompare, LCase(nm.Name), "t4pm") > 0 And InStr(vbTextCompare, LCase(nm.Name), "projectreference") Then
-                GetLiveReferenceCode = Range(nm.Name).Value
+            
+            sheetname$ = sh.Name
+            rangename$ = nm.Name
+            rangename$ = Replace(rangename$, sheetname$, "")
+            rangename$ = Replace(rangename$, "''", "")
+            If Left(rangename$, 1) = "!" Then rangename$ = Right(rangename$, Len(rangename$) - 1)
+            
+                On Error Resume Next
+                oldrefcode = GetLiveReferenceCode
+                GetLiveReferenceCode = sh.Range(rangename$).Cells(1).Value
+                If oldrefcode <> GetLiveReferenceCode Then refCount = refCount + 1
 
-                refCount = refCount + 1
             End If
             
         Next
     
     Next
+
 
     If refCount > 1 Then
         GetLiveReferenceCode = ""
@@ -24,6 +33,7 @@ Function GetLiveReferenceCode() As String
     
 
 End Function
+
 
 
 Sub PushReadDataToWorksheets(dummy$)

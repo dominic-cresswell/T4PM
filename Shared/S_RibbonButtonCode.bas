@@ -36,9 +36,26 @@ Sub Onload(ribbon As IRibbonUI)
      ' get the field list
       Call ImportFieldData("")
                 
-      If Application.Name = "Microsoft Excel" Then Call E_RibbonButtonCode.ExcelRibbonLoad
+    
         
-
+    RememberProject = False
+    
+' ~~~~~~~~~~~~~~~~~~
+        If S_UserConfigCode.GetConfigSetting("RememberLastProject") <> "" _
+           And Replace(LCase(S_UserConfigCode.GetConfigSetting("RememberLastProject")), vbCr, "") = "true" Then
+            RememberProject = True
+           
+          ' one stop shop for finding remembered projects
+            Call RestoreStore("")
+            
+       Else
+            RememberProject = False
+    
+       End If
+    
+    
+    
+'   If Application.Name = "Microsoft Excel" Then Call E_RibbonButtonCode.ExcelRibbonLoad
          
 End Sub
 
@@ -155,7 +172,7 @@ skipselector:
     
     Dim FieldExc As Workbook
     On Error GoTo abort:
-    Set FieldExc = Application.Workbooks.Open(FieldRefFile$, False, True)
+    Set FieldExc = Excel.Workbooks.Open(FieldRefFile$, False, True)
     
 
     ' clear the fieldlist table
@@ -281,31 +298,8 @@ Sub PickProject_Click(control As IRibbonControl)
     WorkingPath$ = AddSlash(GetConfigSetting("WorkingPath"))
     PickedFile$ = FindProjectSelection(WorkingPath$)
    
-    If InStr(vbTextCompare, LCase(PickedFile$), "t4pm_") < 1 Then
-        Result = MsgBox("No valid T4PM Project Store selected", vbCritical, ProgramName$)
-        Exit Sub
-    End If
-  
-  ' =======
-    If FileExists(PickedFile$) = False Then
-        Result = MsgBox("Invalid T4PM Project Store Selection", vbCritical, ProgramName$)
-        Exit Sub
-    End If
-    
-    CurrentStore$ = PickedFile$
-    
-    ' but are we permitted to use this
-
-     Call ClearReadData("")
-     Call RestoreStore("")
-     Call ImportDataFromStore("")
-        
-     Call RefreshRibbon("")
-    
-    
-Exit Sub
-abort:
-    Result = MsgBox("Invalid T4PM Project Store Selection", vbCritical, ProgramName$)
+  '
+    LoadProjectStore (PickedFile$)
 
 End Sub
 
@@ -384,15 +378,16 @@ Sub DownloadData_Click(control As IRibbonControl)
     ' get all the info
     Call ImportDataFromStore("")
 
-    ' get the 'type' of data
+    ' get the 'type' of data (include collection/individual etc)
     
     ' get the grouped data
     
     ' get the special data
     
     ' push it to the field references
-        Call PushReadDataToWorksheets("")
-        
+       If Application.Name = "Microsoft Excel" Then Call E_DataUploadCode.PushReadDataToWorksheets("")
+       If Application.Name = "Microsoft Word" Then Call W_DownloadCode.PushReadDataToDocument("")
+       
 End Sub
 
 

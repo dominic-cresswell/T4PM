@@ -2,43 +2,6 @@ Attribute VB_Name = "E_UploadCode"
 Option Private Module
 
 
-' .... we lost the store, find a cheap/hack way to restore it!
-
-
-Sub RestoreStore(dummy$)
-
-    ' grab the working path
-            
-        If WorkingPath$ = "" Then
-            WorkingPath$ = AddSlash(GetConfigSetting("WorkingPath"))
-        End If
-        
-        If WorkingPath$ <> "" And DirExists(WorkingPath$) = True Then
-            TempStore$ = WorkingPath$
-        
-        End If
-        
-    ' grab the reference number
-     If GetTempData_WriteBuffer("Project Reference") = "" Then
-         Call PullWriteDataFromWorksheets("")
-     End If
-     
-     
-     TempRef$ = GetTempData_WriteBuffer("Project Reference")
-            
-     If TempRef$ <> "" And TempStore$ <> "" Then
-         TempStore$ = TempStore$ & TempRef$
-     End If
-     
-     
-    ' check file exists
-    If FileExists("T4PM" & TempStore$ & ".xls") = False Then
-            TempStore$ = ""
-    End If
-
-    If TempStore$ <> "" Then CurrentStore$ = "T4PM" & TempStore$ & ".xls"
-
-End Sub
 
 
 ' =================== moving data upstream

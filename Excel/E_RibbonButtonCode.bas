@@ -1,7 +1,7 @@
 Attribute VB_Name = "E_RibbonButtonCode"
 Option Private Module
 
-Public Const ExcelVersion = 2
+Public Const ApplicationVersion = 3
 
 
 Sub ExcelRibbonLoad()

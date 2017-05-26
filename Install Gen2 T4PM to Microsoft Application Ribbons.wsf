@@ -1,0 +1,254 @@
+<job>
+<script language="VBscript">
+
+'
+' INSTALLATION SCRIPT FOR LATEST T4PM EXCEL ADD-IN
+'
+'  DOM CRESSWELL 10/05/2017  V1.0
+'
+'
+
+
+Dim fso, wshShell, scriptBaseName
+On Error Resume Next  
+
+
+' VERIFY SCRIPTING WORKS OK
+   Set fso = CreateObject("Scripting.FileSystemObject")
+
+   Set wshShell   = CreateObject("Wscript.Shell")
+   scriptBaseName = FSO.GetBaseName(Wscript.ScriptFullName)   
+   If Err.Number <> 0 Then
+      Wscript.Quit
+   End If
+
+' GET BASE INFORMATION ABOUT USER
+	On Error Goto 0
+    	   ThisUser = Environ2("username")
+	    ThisCPU = Environ2("computername")
+	ThisAppData = Environ2("APPDATA")
+
+
+' CHECK FOR EXCEL ALREADY RUNNING
+If IsProcessRunning(ThisCPU,"EXCEL.EXE") = True Then
+
+	Result = MsgBox("This task requires Excel to be closed. You will lose any unsaved work." & vbCrLf & vbCrLf & "Continue, and automatically close Excel?", vbYesNo)
+
+      If Result <> vbYes Then WScript.quit
+
+' kill excel!
+       Call KillProcess("EXCEL.EXE")
+End If
+
+
+' LOCATION TO INSTALL TO (APPDATA ADDINS)
+
+    AddInLibPathE = Environ2("APPDATA")
+
+    If Right(AddInLibPathE, 1) <> "\" Then
+   	 AddInLibPathE = AddInLibPathE & "\"
+    End If
+    AddInLibPathE = AddInLibPathE & "Microsoft\AddIns\"
+
+	sFilename = "Gen2 T4PM Add-In.xlam"
+
+
+' LINK TO FILE TO INSTALL
+	CurAddInPathE = "\\invicta.cantium.net\kccroot\Global\SHQ\CED PG\General\Workflows\2017 - Project Managers Toolkit\T4PM Toolkit\Addin\" + sFilename
+
+
+'REMOVE ANY EXISITING FILE
+	    If fso.FileExists(AddInLibPathE & sFilename) = True Then
+	        fso.deletefile AddInLibPathE & sFilename
+		WScript.Sleep 1000
+	    End If
+
+
+' DO THE FILE COPY
+
+	    fso.CopyFile CurAddInPathE, AddInLibPathE 
+
+
+
+' ENABLE THE SCRIPT IN EXCEL
+
+
+    Set objExcel = CreateObject("Excel.Application")
+    Set objWorkbook = objExcel.workbooks.add()
+
+    Set oaddin_one = objExcel.AddIns.Add(AddInLibPathE + sFilename, True)
+        oaddin_one.Installed = True
+
+    objWorkbook.Close
+    objExcel.Quit
+
+' +++++++++++++++++++++++++++++++++++++++
+
+
+' CHECK FOR WORD ALREADY RUNNING
+If IsProcessRunning(ThisCPU,"WINWORD.EXE") = True Then
+
+	Result = MsgBox("This task requires Word to be closed. You will lose any unsaved work." & vbCrLf & vbCrLf & "Continue, and automatically close Word?", vbYesNo)
+
+      If Result <> vbYes Then WScript.quit
+
+' kill excel!
+       Call KillProcess("WINWORD.EXE")
+End If
+	    
+' LOCATION TO INSTALL TO (APPDATA ADDINS)
+
+    ' word add-in
+    AddInLibPathW = Environ2("APPDATA")
+    If Right(AddInLibPathW, 1) <> "\" Then
+    AddInLibPathW = AddInLibPathW & "\"
+    End If
+    AddInLibPathW = AddInLibPathW & "Microsoft\"
+    AddInLibPathW = AddInLibPathW & "Word\"
+
+
+
+	    If fso.FolderExists(AddInLibPathW & "startup\") = False Then
+	        fso.createfolder AddInLibPathW & "startup\"
+		AddInLibPathW = AddInLibPathW & "startup\"
+		WScript.Sleep 1000
+	    End If
+
+
+	'AddInLibPathW = "H:\Workarea\Templates"
+
+    If Right(AddInLibPathW, 1) <> "\" Then
+    AddInLibPathW = AddInLibPathW & "\"
+    End If
+	wFilename = "Gen2 T4PM Add-In.dotm"
+
+
+' LINK TO FILE TO INSTALL
+	CurAddInPathW = "\\invicta.cantium.net\kccroot\Global\SHQ\CED PG\General\Workflows\2017 - Project Managers Toolkit\T4PM Toolkit\Addin\" + wFilename
+
+
+
+'REMOVE ANY EXISITING FILE
+	    If fso.FileExists(AddInLibPathW & wFilename) = True Then
+	        fso.deletefile AddInLibPathW & wFilename
+		WScript.Sleep 1000
+	    End If
+
+
+' DO THE FILE COPY
+
+	    fso.CopyFile CurAddInPathW, AddInLibPathW
+
+
+
+' ENABLE THE SCRIPT IN WORD
+
+'C:\Users\cressd02\AppData\Roaming\Microsoft\Word\Startu[
+ '   Set objWord = CreateObject("Word.Application")
+'	Set oaddin_one = objWord.AddIns.Add(AddInLibPathW & wFilename)
+'	objWord.visible = true
+'
+'	 objWord.AddIns.item("Gen2 T4PM Add-In.dotm").installed = True'
+'
+   ' objWord.Quit
+
+
+    msgbox "Installation Complete."
+
+Wscript.quit
+
+
+
+
+' ====================== sub here
+
+' ====================== sub here
+
+Function MakeButtonCode(BID,BLabel,BMacro,BImage,BSize)
+		Q = Chr(34)
+		MakeButtonCode= ""
+		MakeButtonCode = MakeButtonCode & "<mso:button idQ=" + Q + "x1:" + BID + Q 
+		MakeButtonCode = MakeButtonCode + " visible=" + Q + "true" + Q 
+		MakeButtonCode = MakeButtonCode + " label=" + Q + BLabel + Q  
+		MakeButtonCode = MakeButtonCode + " onAction=" + Q + BMacro + Q 
+		MakeButtonCode = MakeButtonCode + " imageMso=" + Q + BImage + Q 
+if BSize<>"" then MakeButtonCode = MakeButtonCode + " size=" + Q + BSize + Q 
+		MakeButtonCode = MakeButtonCode + "/>" & vbcrlf
+
+End Function
+
+
+Function Environ2(inStr)
+
+	Set oShell = CreateObject( "WScript.Shell" )
+	Environ2=oShell.ExpandEnvironmentStrings("%" & inStr & "%")
+
+end Function
+
+
+Function ProcessScript
+   Dim wordPath
+   wordPath = ReadRegistry("HKLM\SOFTWARE\Microsoft\Office\11.0\Word\InstallRoot\Path")
+   If Not FSO.FileExists(wordPath & "\Winword.exe") Then
+      MsgBox "Microsoft Word is not installed", vbCritical, scriptBaseName
+      Exit Function
+   End If
+   MsgBox "Microsoft Word is installed", vbInformation, scriptBaseName
+End Function
+
+
+Function ReadRegistry(ByVal key)
+   Dim result
+   If StrComp (Left (key, 4), "HKU\", vbTextCompare) = 0 Then
+      Key = "HKEY_USERS" & Mid (key, 4)
+   End If
+   On Error Resume Next
+      ReadRegistry = WshShell.RegRead (key)
+      If Err.Number <> 0 Then
+         ReadRegistry = ""
+      End If
+   On Error Goto 0
+End Function
+
+
+
+Function FindOffice(inProg)
+	FindOffice = 0
+
+	For A=0 to 20
+		progCheckx86 = "C:\Program Files (x86)\Microsoft Office\Office" & A & "\" & inProg
+		progCheck = "C:\Program Files\Microsoft Office\Office" & A & "\" & inProg
+
+		If  FSO.FileExists(progCheck) = true or FSO.FileExists(progCheckx86) = true then 
+		FindOffice = A
+		exit function
+		end if
+	next 
+
+end function
+
+
+Function IsProcessRunning( strComputer, strProcess )
+    Dim Process, strObject
+    IsProcessRunning = False
+    strObject   = "winmgmts://" & strComputer
+    For Each Process in GetObject( strObject ).InstancesOf( "win32_process" )
+    If UCase( Process.name ) = UCase( strProcess ) Then
+        IsProcessRunning = True
+        Exit Function
+    End If
+    Next
+End Function
+
+
+Sub KillProcess(inProg)
+	Dim oShell : Set oShell = CreateObject("WScript.Shell")
+
+	WScript.Sleep 1000
+	oShell.Run "taskkill /f /im " + inProg, , True
+	WScript.Sleep 1000
+
+End Sub
+
+</script>
+</job>
