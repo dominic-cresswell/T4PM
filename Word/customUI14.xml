@@ -2,7 +2,7 @@
 <customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui" onLoad="S_RibbonButtonCode.Onload">
 <ribbon>
 <tabs>
-<tab id="PMTab1" label="GEN² T4PM">
+<tab id="PMTab1" label="GENÂ² T4PM">
 
  <group id="PMGrp1" label="Information" >
 
@@ -49,13 +49,7 @@
 			imageMso="LinksBetweenProjects"
 			onAction="S_RibbonButtonCode.PickProject_Click"/>
 
-         <button 	size = "large"
-			id="UploadData"
-			label="Upload Project Data"
-			imageMso="ShadowNudgeUpClassic"
-			onAction="S_RibbonButtonCode.UploadData_Click"/>
-
-         <button 	size = "large"
+          <button 	size = "large"
 			id="DownloadData"
 			label="Download Project Data"
 			imageMso="ShadowNudgeDownClassic"
@@ -94,7 +88,7 @@
  </group>
 
 </tab>
-<tab id="PMTab2" label="GEN² T4PM Editor" getVisible="EditorTab">
+<tab id="PMTab2" label="GENÂ² T4PM Editor" getVisible="EditorTab">
  <group id="PMGrp3" label="Template Setup" >
 
          <button 	
