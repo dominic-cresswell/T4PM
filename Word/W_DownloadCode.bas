@@ -4,8 +4,7 @@ Option Private Module
 
 
 Sub PushReadDataToDocument(dummy$)
-    
-GoTo MopUp:
+
     For zzz = 0 To 9999
             FieldName1$ = ProjectReadDataArray(zzz, 0)
             
@@ -54,14 +53,14 @@ GoTo MopUp:
 MopUp:
 ' mop up the leftovers
 
-    With ThisDocument.StoryRanges.Item(wdMainTextStory).Find
+    With ActiveDocument.StoryRanges.Item(wdMainTextStory).Find
         .Text = "<T4PM*_*_*_*_*>"
         .MatchWildcards = True
         .Replacement.Text = "T4PM"
         .Execute Replace:=wdReplaceAll
     End With
 
-    With ThisDocument.StoryRanges.Item(wdMainTextStory).Find
+    With ActiveDocument.StoryRanges.Item(wdMainTextStory).Find
         .Text = "<<T4PM>>"
         .MatchWildcards = False
         .Replacement.Text = ""
@@ -74,7 +73,7 @@ Exit Sub
 DoShapeReplace:
 
  ' do shapes
-   For Each sh In ThisDocument.Shapes
+   For Each sh In ActiveDocument.Shapes
         GetText$ = sh.TextFrame.TextRange
         sh.TextFrame.TextRange.Text = Replace(GetText$, "<<" & FindText$ & ">>", ReplacedText$)
     Next
@@ -83,7 +82,7 @@ DoShapeReplace:
     
 DoReplace:
     ' do everything else
-    With ThisDocument.StoryRanges.Item(locale).Find
+    With ActiveDocument.StoryRanges.Item(locale).Find
              .Text = "<<" & FindText$ & ">>"
              .Replacement.Text = ReplacedText$
              .Forward = True

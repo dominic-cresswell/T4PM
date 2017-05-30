@@ -47,8 +47,10 @@ visible = False
     
     If InStr(vbTextCompare, thisuser, "cressd02") > 0 Then visible = True
     If InStr(vbTextCompare, thisuser, "whitee06") > 0 Then visible = True
+    If InStr(vbTextCompare, thisuser, "ashbyj01") > 0 Then visible = True
+    If InStr(vbTextCompare, thisuser, "hesela02") > 0 Then visible = True
     
-
+    
 End Sub
 
 
