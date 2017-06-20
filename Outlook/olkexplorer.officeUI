@@ -1,0 +1,31 @@
+<mso:customUI xmlns:x1="http://schemas.microsoft.com/office/2009/07/customui/macro" xmlns:mso="http://schemas.microsoft.com/office/2009/07/customui">
+<mso:ribbon>
+
+<mso:qat/>
+<mso:tabs>
+
+<mso:tab id="mso_c1.F3800C" label="Gen² T4PM" insertBeforeQ="mso:TabAddIns">
+
+<mso:group id="mso_c2.F3800C" label="Information" autoScale="true">
+<mso:button idQ="x1:T4PM.Info_Click_0_173DAB" label="Info." imageMso="Info" onAction="T4PM.Info_Click" visible="true"/>
+<mso:button idQ="x1:T4PM.Help_Click_1_173DAB" label="Help" imageMso="Help" onAction="T4PM.Help_Click" visible="true"/>
+</mso:group>
+
+<mso:group id="mso_c3.F3D888" label="E-mail Storage" autoScale="true">
+<mso:button idQ="x1:T4PM.Store_Emails_Click_2_173DAB" label="Store E-Mails" imageMso="SaveSentItemsMenu" onAction="T4PM.Store_Emails" visible="true"/>
+<mso:button idQ="x1:T4PM.Tag_Emails_Click_3_173DAB" label="Label E-mails" imageMso="RegionLayoutMenu" onAction="T4PM.Tag_Emails" visible="true"/>
+</mso:group>
+
+
+<mso:group id="mso_c4.F42A8D" label="Current Project" autoScale="true">
+
+<mso:button idQ="x1:T4PM.Select_Project_Click_6_173DAB" label="Select Project Store" imageMso="LinksBetweenProjects" onAction="T4PM.PickProject_Click" visible="true"/>
+<mso:button idQ="x1:T4PM.Mail_Click_7_173DAB" label="Project E-mail" imageMso="NewMailMessage" onAction="T4PM.Email_Click" visible="true"/>
+<mso:button idQ="x1:T4PM.Folder_Click_8_173DAB" label="Project Folder" imageMso="Folder" onAction="T4PM.Folder_Click" visible="true"/>
+
+
+</mso:group>
+</mso:tab>
+</mso:tabs>
+</mso:ribbon>
+</mso:customUI>
