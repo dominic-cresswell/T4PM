@@ -28,7 +28,7 @@ Sub SetProjectFolder(dummy$)
         
         Call ClearWriteData("")
 
-        ProjectWriteDataArray(nnn, 0) = "Folder Path"   ' field name
+        ProjectWriteDataArray(nnn, 0) = "FolderPath_n0"   ' field name
         ProjectWriteDataArray(nnn, 1) = FindFolder$     ' content / value
         ProjectWriteDataArray(nnn, 2) = "text"          ' type
         ProjectWriteDataArray(nnn, 3) = ""
